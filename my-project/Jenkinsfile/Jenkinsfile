@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                // Your build steps here
+            }
+        }
+        
+        stage('Scan Snyk Security') {
+            steps {
+                sh 'snyk test' // Assuming Snyk CLI is installed and configured
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Your deployment steps here
+            }
+        }
+    }
+}

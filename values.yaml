@@ -1,0 +1,10 @@
+1 dev_blockchain_worker
+2 dev_bridge_scan_cleo
+3 dev_bridge_scan_polygon
+4 dev_bridge_scan_eth
+5 dev_bridge_scan_bsc
+6 dev_bridge_worker
+7 dev_casa
+8 dev_push
+9 dev_onboarding
+10 dev_scan_confirmation

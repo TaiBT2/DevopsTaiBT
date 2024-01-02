@@ -1,0 +1,150 @@
+tcp: {}
+udp: {}
+#  53: "kube-system/kube-dns:53"
+ 
+controller:
+  ingressClass: nginx
+
+  extraArgs:
+    default-ssl-certificate: "ingress-nginx/ingress-cert-synodus"
+  name: controller
+  image:
+    ## Keep false as default for now!
+    chroot: false
+    registry: k8s.gcr.io
+    image: ingress-nginx/controller
+    ## for backwards compatibility consider setting the full image url via the repository value below
+    ## use *either* current default registry/image or repository format or installing chart by providing the values.yaml will fail
+    ## repository:
+    pullPolicy: IfNotPresent
+    # www-data -> uid 101
+    runAsUser: 101
+    allowPrivilegeEscalation: true
+ 
+  hostNetwork: true
+  ## Use host ports 80 and 443
+  ## Disabled by default
+  hostPort:
+    # -- Enable 'hostPort' or not
+    enabled: true
+    ports:
+      # -- 'hostPort' http port
+      http: 80
+      # -- 'hostPort' https port
+      https: 443
+ 
+  containerPort:
+    http: 80
+    https: 443
+ 
+  service:
+    ports:
+      http: 80
+      https: 443
+ 
+    targetPorts:
+      http: http
+      https: https
+ 
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+ 
+    nodePorts:
+      http: 32080
+      https: 32443
+      # tcp:
+      #   8080: 32808
+      # udp: {}
+ 
+    external:
+      enabled: true
+ 
+    internal:
+      # -- Enables an additional internal load balancer (besides the external one).
+      enabled: false
+      # -- Annotations are mandatory for the load balancer to come up. Varies with the cloud service.
+      annotations: {}
+ 
+      # loadBalancerIP: ""
+ 
+      # -- Restrict access For LoadBalancer service. Defaults to 0.0.0.0/0.
+      loadBalancerSourceRanges: []
+ 
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+    behavior: {}
+      # scaleDown:
+      #   stabilizationWindowSeconds: 300
+      #  policies:
+      #   - type: Pods
+      #     value: 1
+      #     periodSeconds: 180
+      # scaleUp:
+      #   stabilizationWindowSeconds: 300
+      #   policies:
+      #   - type: Pods
+      #     value: 2
+      #     periodSeconds: 60
+ 
+  config:
+    #use-forwarded-headers: "true"   #neu nginx sau l7 proxy
+    #use-proxy-protocol: "true"      #neu nginx sau l4 proxy
+    enable-modsecurity: "true"
+    enable-owasp-modsecurity-crs: "true"
+    
+  metrics:
+    port: 10254
+    enabled: true
+ 
+    service:
+      annotations:
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
+ 
+      # clusterIP: ""
+      externalIPs: []
+ 
+      # loadBalancerIP: ""
+      loadBalancerSourceRanges: []
+      servicePort: 10254
+      type: ClusterIP
+      # externalTrafficPolicy: ""
+      # nodePort: ""
+ 
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus  #chính là tên match the name of the helm release of the kube-prometheus-stack
+      ## The label to use to retrieve the job name from.
+      ## jobLabel: "app.kubernetes.io/name"
+      namespace: "ingress-nginx"
+      namespaceSelector: {}
+      ## Default: scrape .Release.Namespace only
+      ## To scrape all, use the following:
+      ## namespaceSelector:
+      ##   any: true
+      scrapeInterval: 30s
+      # honorLabels: true
+      targetLabels: []
+      relabelings: []
+      metricRelabelings: []
+ 
+    prometheusRule:
+      enabled: false
+      additionalLabels: {}
+      # namespace: ""
+      rules: []
+ 
+  extraVolumes:
+  - name: tz-config
+    hostPath:
+      path: /etc/localtime
+  extraVolumeMounts:
+  - name: tz-config
+    mountPath: /etc/localtime

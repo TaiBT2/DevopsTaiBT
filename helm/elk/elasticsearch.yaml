@@ -1,0 +1,72 @@
+clusterName: "elasticsearch"
+nodeGroup: "master"
+replicas: 3
+minimumMasterNodes: 2
+# Disable it to use your own elastic-credential Secret.
+secret:
+  enabled: true
+  password: "Cl30P@ssAdm1n2023" # generated randomly if not defined
+image: "docker.elastic.co/elasticsearch/elasticsearch"
+imageTag: "8.5.1"
+imagePullPolicy: "IfNotPresent"
+esJavaOpts: "-Xmx1g -Xms1g" # example: "-Xmx1g -Xms1g"
+
+esConfig:
+ elasticsearch.yml: |
+   http:
+     max_initial_line_length: 64kb
+#  elasticsearch.yml: |
+#    key:
+#      nestedkey: value
+#    http:
+#      max_initial_line_length: 64kb     
+#  log4j2.properties: |
+#    key = value
+
+createCert: true
+
+esJvmOptions: {}
+#  processors.options: |
+#    -XX:ActiveProcessorCount=3
+
+extraEnvs: []
+  # - name: xpack.security.http.ssl.enabled
+  #   value: "false"
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: 1
+    memory: "2Gi"
+
+volumeClaimTemplate:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 50Gi
+antiAffinityTopologyKey: "kubernetes.io/hostname"
+antiAffinity: "soft"
+# nodeSelector:
+#   repository: "mongodb-elk"
+
+protocol: http
+httpPort: 9200
+transportPort: 9300
+
+service:
+  enabled: true
+  labels: {}
+  labelsHeadless: {}
+  type: ClusterIP
+  # Consider that all endpoints are considered "ready" even if the Pods themselves are not
+  # https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
+  publishNotReadyAddresses: false
+  nodePort: ""
+  annotations: {}
+  httpPortName: http
+  transportPortName: transport
+  loadBalancerIP: ""
+  loadBalancerSourceRanges: []
+  externalTrafficPolicy: ""

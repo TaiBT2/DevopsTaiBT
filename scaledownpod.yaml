@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-down-job
+  namespace: s22nbaeqxeca-prelive
+spec:
+  schedule: 59 22 * * *
+  timeZone: Asia/Ho_Chi_Minh
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+            - name: scale-down-job
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  kubectl scale deployment -n s22nbaeqxeca-prelive --replicas
+                  0 --all 
+              resources: {}
+              imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          terminationGracePeriodSeconds: 30

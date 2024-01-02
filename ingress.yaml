@@ -1,0 +1,245 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: websocket-uat
+  namespace: s22nbaeqxeca-prelive
+  labels:
+    k8slens-edit-resource-version: v1
+  annotations:
+    kubernetes.io/ingress.class: gce
+    kubernetes.io/ingress.global-static-ip-name: xeca-websocket
+    networking.gke.io/managed-certificates: >-
+      websocket-uat ,superadmin-uat, apigateway-uat, vamminh-cm, vinhquang-cm,
+      demo-cm, hoangphu-cm, logging-cm, lachong-cm, dutuyet-cm, nhuannam-cm,
+      trungtram-cm, datcang-cm, anhtai-cm, anhhong-cm, tausonglam-cm,
+      khanhtruyen-cm, duchiep-cm, hongphuc-cm, cohuong-cm, thachthanh-cm
+    networking.gke.io/v1beta1.FrontendConfig: http-to-https
+spec:
+  rules:
+    - host: superadmin-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xeca-admin-service-prelive-svc
+                port:
+                  number: 81
+    - host: api-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apigw-service-prelive-svc
+                port:
+                  number: 8080
+    - host: logging-xeca.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: xeca-grafana
+                port:
+                  number: 3000
+    - host: vanminh-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: hoangphu-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: lachong-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: dutuyet-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: vinhquang-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: nhuannam-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: trungtram-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: datcang-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: anhtai-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: anhhong-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: tausonglam-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: khanhtruyen-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: duchiep-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: hongphuc-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: cohuong-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: thachthanh-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: xeca-uat.xeca.vn
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: xeca-uat.synodus.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service-prelive-svc
+                port:
+                  number: 80
+    - host: websocket-uat.xeca.vn
+      http:
+        paths:
+          - path: /ticket-socket
+            pathType: Prefix
+            backend:
+              service:
+                name: ticket-service-prelive-svc
+                port:
+                  number: 3003
+          - path: /notification-socket
+            pathType: Prefix
+            backend:
+              service:
+                name: notification-service-prelive-svc
+                port:
+                  number: 3007

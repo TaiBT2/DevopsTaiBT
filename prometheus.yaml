@@ -1,0 +1,54 @@
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
+
+helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n observability --create-namespace --set server.global.scrape_interval=10s -f -<<EOF
+kubeStateMetrics:
+
+  enabled: true
+
+nodeExporter:
+
+  enabled: false
+
+pushgateway:
+
+  enabled: false
+
+prometheusOperator:
+
+  enabled: true
+
+ 
+
+defaultRules:
+
+  create: false
+
+  appNamespacesTarget: ".*"
+
+ 
+
+additionalPrometheusRulesMap: {}
+
+prometheus:
+
+  enabled: true
+
+  prometheusSpec:
+
+    podMonitorSelectorNilUsesHelmValues: false
+
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+grafana:
+
+  enabled: false
+
+alertmanager:
+
+  enabled: false
+
+  templateFiles: {}
+
+EOF

@@ -1,0 +1,10 @@
+version: v1.19.0
+ignore:
+  'npm:braces:20180219':
+    - 'my-project > my-dependency > braces':
+        reason: None Given
+        expires: '2021-03-01T06:00:00.000Z'
+  'npm:hoek:20180212':
+    - 'my-project > my-dependency > hoek':
+        reason: None Given
+        expires: '2021-03-01T06:00:00.000Z'

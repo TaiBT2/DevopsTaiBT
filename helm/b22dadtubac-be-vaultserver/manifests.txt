@@ -1,0 +1,300 @@
+---
+# Source: b22dadtubac-be-vaultserver/templates/server-config-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: b22dadtubac-be-vaultserver-config
+  namespace: b22dadtubac-staging-gcp
+  labels:
+    helm.sh/chart: b22dadtubac-be-vaultserver-0.0.1
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    app.kubernetes.io/managed-by: Helm
+data:
+  extraconfig-from-values.hcl: |-
+    disable_mlock = true
+    ui = true
+    
+    # Use postgresql as storage backend
+    storage "postgresql" {
+      connection_url = "postgres://vault:dH8rT4tP5nS1iK6u@10.48.1.2:5432/vaultdb"
+    }
+    
+    listener "tcp" {
+      address     = "0.0.0.0:8200"
+      tls_disable = 1
+    }
+    
+    api_addr = "http://127.0.0.1:8200"
+    cluster_addr = "https://127.0.0.1:8201"
+    disable_mlock = true
+    ui = true
+    # plugins
+    plugin_directory = "/vault/data/plugins"
+---
+# Source: b22dadtubac-be-vaultserver/templates/server-headless-service.yaml
+# Service for Vault cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: b22dadtubac-be-vaultserver-internal
+  namespace: b22dadtubac-staging-gcp
+  labels:
+    helm.sh/chart: b22dadtubac-be-vaultserver-0.0.1
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    app.kubernetes.io/managed-by: Helm
+    vault-internal: "true"
+  annotations:
+
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: "http"
+      port: 8200
+      targetPort: 8200
+    - name: https-internal
+      port: 8201
+      targetPort: 8201
+  selector:
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    component: server
+---
+# Source: b22dadtubac-be-vaultserver/templates/server-service.yaml
+# Service for Vault cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: b22dadtubac-be-vaultserver
+  namespace: b22dadtubac-staging-gcp
+  labels:
+    helm.sh/chart: b22dadtubac-be-vaultserver-0.0.1
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+
+spec:
+  type: ClusterIP
+  # We want the servers to become available even if they're not ready
+  # since this DNS is also used for join operations.
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 8200
+      targetPort: 8200
+    - name: https-internal
+      port: 8201
+      targetPort: 8201
+  selector:
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    component: server
+---
+# Source: b22dadtubac-be-vaultserver/templates/ui-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: b22dadtubac-be-vaultserver-ui
+  namespace: b22dadtubac-staging-gcp
+  labels:
+    helm.sh/chart: b22dadtubac-be-vaultserver-0.0.1
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver-ui
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    component: server
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: 8200
+      targetPort: 8200
+  type: ClusterIP
+---
+# Source: b22dadtubac-be-vaultserver/templates/server-statefulset.yaml
+# StatefulSet to run the actual vault server cluster.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: b22dadtubac-be-vaultserver
+  namespace: b22dadtubac-staging-gcp
+  labels:
+    app.kubernetes.io/name: b22dadtubac-be-vaultserver
+    app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+    app.kubernetes.io/managed-by: Helm
+spec:
+  serviceName: b22dadtubac-be-vaultserver-internal
+  podManagementPolicy: Parallel
+  replicas: 1
+  updateStrategy:
+    type: OnDelete
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: b22dadtubac-be-vaultserver
+      app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+      component: server
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: b22dadtubac-be-vaultserver-0.0.1
+        app.kubernetes.io/name: b22dadtubac-be-vaultserver
+        app.kubernetes.io/instance: b22dadtubac-be-vaultserver
+        component: server
+    spec:
+      
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: b22dadtubac-be-vaultserver
+                  app.kubernetes.io/instance: "b22dadtubac-be-vaultserver"
+                  component: server
+              topologyKey: kubernetes.io/hostname
+  
+      
+      
+      
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: default
+      
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 100
+        fsGroup: 1000
+      hostNetwork: false
+
+      volumes:
+        
+        - name: config
+          configMap:
+            name: b22dadtubac-be-vaultserver-config
+  
+        - name: home
+          emptyDir: {}
+      containers:
+        - name: vault
+          resources:
+            limits:
+              cpu: 20m
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 128Mi
+  
+          image: repo.edsolabs.com/staging/b22dadtubac-be-vaultserver:latest
+          imagePullPolicy: IfNotPresent
+          command:
+          - "/bin/sh"
+          - "-ec"
+          args: 
+          - |
+            cp /vault/config/extraconfig-from-values.hcl /tmp/storageconfig.hcl;
+            [ -n "${HOST_IP}" ] && sed -Ei "s|HOST_IP|${HOST_IP?}|g" /tmp/storageconfig.hcl;
+            [ -n "${POD_IP}" ] && sed -Ei "s|POD_IP|${POD_IP?}|g" /tmp/storageconfig.hcl;
+            [ -n "${HOSTNAME}" ] && sed -Ei "s|HOSTNAME|${HOSTNAME?}|g" /tmp/storageconfig.hcl;
+            [ -n "${API_ADDR}" ] && sed -Ei "s|API_ADDR|${API_ADDR?}|g" /tmp/storageconfig.hcl;
+            [ -n "${TRANSIT_ADDR}" ] && sed -Ei "s|TRANSIT_ADDR|${TRANSIT_ADDR?}|g" /tmp/storageconfig.hcl;
+            [ -n "${RAFT_ADDR}" ] && sed -Ei "s|RAFT_ADDR|${RAFT_ADDR?}|g" /tmp/storageconfig.hcl;
+            /usr/local/bin/docker-entrypoint.sh vault server -config=/tmp/storageconfig.hcl 
+   
+          securityContext:
+            allowPrivilegeEscalation: false
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: VAULT_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: VAULT_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: VAULT_ADDR
+              value: "http://127.0.0.1:8200"
+            - name: VAULT_API_ADDR
+              value: "http://$(POD_IP):8200"
+            - name: SKIP_CHOWN
+              value: "true"
+            - name: SKIP_SETCAP
+              value: "true"
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: VAULT_CLUSTER_ADDR
+              value: "https://$(HOSTNAME).b22dadtubac-be-vaultserver-internal:8201"
+            - name: HOME
+              value: "/home/vault"
+            
+            
+            
+          volumeMounts:
+          
+  
+    
+            - name: data
+              mountPath: /vault/data
+    
+  
+  
+            - name: config
+              mountPath: /vault/config
+  
+            - name: home
+              mountPath: /home/vault
+          ports:
+            - containerPort: 8200
+              name: http
+            - containerPort: 8201
+              name: https-internal
+            - containerPort: 8202
+              name: http-rep
+          lifecycle:
+            # Vault container doesn't receive SIGTERM from Kubernetes
+            # and after the grace period ends, Kube sends SIGKILL.  This
+            # causes issues with graceful shutdowns such as deregistering itself
+            # from Consul (zombie services).
+            preStop:
+              exec:
+                command: [
+                  "/bin/sh", "-c",
+                  # Adding a sleep here to give the pod eviction a
+                  # chance to propagate, so requests will not be made
+                  # to this pod while it's terminating
+                  "sleep 5 && kill -SIGTERM $(pidof vault)",
+                ]
+            postStart:
+              exec:
+                command:
+                - "/bin/sh"
+                - "-c"
+                - "mkdir -p /vault/data/plugins && chmod 755 /vault/data/plugins -R"
+      imagePullSecrets:
+        - name: regcred-repo-edsolabs
+  
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: regionalpd-storageclass
+

@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.nameOverride }}-{{ .Values.env }}
+    tier: {{ .Values.env }}-backend
+  annotations:
+    reloader.stakater.com/auto: "true"   
+  name: {{ .Values.nameOverride }}
+  namespace : {{ .Values.namespace }}
+
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .Values.nameOverride }}-{{ .Values.env }}
+      tier: {{ .Values.env }}-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.maxSurge }}
+      maxUnavailable: {{ .Values.maxUnavailable }}
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/agent-inject-secret-.env: cleo/dev2/store
+        vault.hashicorp.com/agent-inject-template-.env: |
+          {{`{{- with secret "cleo/dev2/store" -}}    
+          {{- range $k, $v := .Data }}
+          {{ $k }}={{ $v }} 
+          {{- end }}
+          {{- end }}`}}
+        vault.hashicorp.com/role: cleo-dev2
+        vault.hashicorp.com/auth-path: auth/kubernetes       
+      labels:
+        app: {{ .Values.nameOverride }}-{{ .Values.env }}
+        tier: {{ .Values.env }}-backend
+    spec:
+      serviceAccountName: vault-dev
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets.name }}
+
+      containers:
+      - name: {{ .Values.nameOverride }}-{{ .Values.env }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}" # {"$imagepolicy": "flux-system:b22dadtubac-be-withdrawjob"}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh"]
+        # cat /vault/secrets/.env | tee >> /etc/profile
+        # while read LINE; do echo export $LINE  >> /etc/profile; done < /vault/secrets/.env
+        args: ["-c", "while read LINE; do export $LINE; done < /vault/secrets/.env && node dist/main.js"]
+        ports:
+        - name: {{ .Values.service.nameHttp }}
+          protocol: TCP            
+          containerPort: {{ .Values.service.targetPortHttp }}
+
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+
+        {{- if .Values.command }}
+        command:
+          {{- toYaml .Values.command | nindent 10 }}
+        {{- end }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.nameOverride }}-{{ .Values.env }}
+        {{- if .Values.livenessProbe }}
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.readinessProbe }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.startupProbe }}
+        startupProbe:
+          {{- toYaml .Values.startupProbe | nindent 10 }}
+        {{- end }}
+
+      restartPolicy: {{ .Values.restartPolicy }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ .Values.nameOverride }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
