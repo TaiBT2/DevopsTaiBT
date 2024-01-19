@@ -2,7 +2,38 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: scale-down-job
-  namespace: s22nbaeqxeca-prelive
+  namespace: s23daimgmlm-prod
+spec:
+  schedule: 01 19 * * *
+  timeZone: Asia/Ho_Chi_Minh
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          serviceAccount: mlm-user
+          containers:
+            - name: scale-down-job
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  kubectl scale deployment -n s23daimgmlm-prod --replicas
+                  0 --all 
+              resources: {}
+              imagePullPolicy: IfNotPresent
+          restartPolicy: OnFailure
+          terminationGracePeriodSeconds: 30
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up-job
+  namespace: s23daimgmlm-prod
 spec:
   schedule: 59 22 * * *
   timeZone: Asia/Ho_Chi_Minh
@@ -14,6 +45,7 @@ spec:
         metadata:
           creationTimestamp: null
         spec:
+          serviceAccount: mlm-user
           containers:
             - name: scale-down-job
               image: bitnami/kubectl:latest
@@ -21,9 +53,9 @@ spec:
                 - /bin/sh
                 - '-c'
                 - >-
-                  kubectl scale deployment -n s22nbaeqxeca-prelive --replicas
-                  0 --all 
+                  kubectl scale deployment -n s23daimgmlm-prod --replicas
+                  2 --all 
               resources: {}
               imagePullPolicy: IfNotPresent
           restartPolicy: OnFailure
-          terminationGracePeriodSeconds: 30
+          terminationGracePeriodSeconds: 30          

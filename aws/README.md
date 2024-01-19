@@ -11,3 +11,7 @@
     - AWS GLACIER and Glacer deep: data được đóng băng trong 1 khoảng thời gian. data sẽ được lấy nhanh khi cần, giá rẽ.
 - S3 Transfer Acceleration : truyền tải dữ liệu lên s3 nhanh hơn
 - EBS : Cho dữ liệu ở mức độ truy cập cao, bảo mật dữ liệu, muốn move az thì sẽ tạo snapshot vào move qua az khác
+## RESIZE EBS ZERO DOWTIME
+- check free disk space available: df -h
+- list all block devide: lsblk
+- extend size: growpart /dev/xvda 1 ( phụ thuộc type file system)

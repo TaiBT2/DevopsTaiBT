@@ -1,0 +1,88 @@
+    pipeline {
+        environment {
+            PROJECT = "S23DAARCARCTX"
+            MODULE= "S23DAARCARCTX-fe-productbo"
+        }
+        agent {
+            kubernetes {
+            label "s23daarcarctx-be-productbo-jenkinsagent"
+            showRawYaml false
+            yaml '''
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              labels:
+                app: jenkins-agent
+            spec:
+              imagePullPolicy: IfNotPresent
+              imagePullSecrets:
+                - name: regcred-repo-edsolabs
+              containers:
+                - name: jnlp
+                  image: jenkins/inbound-agent:3148.v532a_7e715ee3-1
+                  args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']   
+                  volumeMounts:
+                  - name: data
+                    mountPath: /data   
+                  env:
+                  - name: GIT_SSH_COMMAND
+                    value: ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /data/SSH-KEY/id_rsa_bitbucket_b22dadtubac    
+
+                - name: sonarqube
+                  image: sonarsource/sonar-scanner-cli
+                  command:
+                  - cat
+                  tty: true                                   
+              volumes:
+                - name: data
+                  persistentVolumeClaim:
+                    claimName: jenkins-agent-pv
+                - name: yarn-cache
+                  persistentVolumeClaim:
+                    claimName: nodemodules-cache
+                '''
+            }
+        }
+        options {
+            timeout(time: 60, unit: 'MINUTES')
+        }
+        stages {
+            stage('Pull') {
+                steps {
+                    checkout(
+                        [
+                            $class: 'GitSCM', 
+                            branches: [
+                                [
+                                    $class: 'BranchSpec',
+                                    name: 'main'
+                                ]
+                            ], 
+                            userRemoteConfigs: [
+                                [
+                                    $class: 'UserRemoteConfig',
+                                    url: 'https://bitbucket.org/synodus/s23daarcarctx-fe-productbo.git',
+                                    credentialsId: 'bitbucket-devopsSND-https'
+                                ]
+                            ]
+                            
+                        ])
+                }
+            }            
+            stage ("Sonarqube Scanning") {
+                steps {
+                    script {
+                        FAILED_STAGE=env.STAGE_NAME
+                    }
+                    container("sonarqube") {
+                        withSonarQubeEnv('SonarQube') {
+                            sh """
+                                sonar-scanner -Dsonar.projectName=\${PROJECT}/\${MODULE} -Dsonar.projectKey=\${PROJECT}-\${MODULE} -Dsonar.sources=. -Dsonar.branch.name=sync_crypo
+                            """
+                        }
+                    }
+                }
+            } 
+                     
+        }
+    }

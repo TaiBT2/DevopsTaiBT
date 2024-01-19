@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout your Flutter project from version control
+                // ...
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                /**
+                 * Build your Flutter project
+                 */
+                 
+            }
+        }
+        
+        stage('SonarQube Scan') {
+            steps {
+                // Run SonarQube scan for your Flutter project
+                // ...
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Deploy your Flutter project
+                // ...
+            }
+        }
+    }
+}

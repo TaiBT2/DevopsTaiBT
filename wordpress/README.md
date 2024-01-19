@@ -1,7 +1,7 @@
-## INSTALL WORDPRESS
+ INSTALL WORDPRESS
 -  install mariadb
 ```
-helm install mariadb oci://registry-1.docker.io/bitnamicharts/mariadb -n s23dajinswap-dev  -f - <<EOF
+helm install mariadb oci://registry-1.docker.io/bitnamicharts/mariadb -n s23daimgmlm-prod  -f - <<EOF
 architecture: standalone
 auth:
   customPasswordFiles: {}
@@ -392,7 +392,7 @@ serviceAccount:
 serviceBindings:
   enabled: false
 volumePermissions:
-  enabled: false
+  enabled: true
   image:
     digest: ""
     pullPolicy: IfNotPresent
@@ -407,9 +407,9 @@ EOF
 ```
 - install wordpress
 ```
-helm upgrade --install s23dajinswap-wordpress oci://registry-1.docker.io/bitnamicharts/wordpress -n s23dajinswap-dev \
+helm upgrade --install s23dajinswap-wordpress2 oci://registry-1.docker.io/bitnamicharts/wordpress -n s23daimgmlm-prod \
 	--set mariadb.enabled=false \
-    --set externalDatabase.host=mariadb.s23dajinswap-dev.svc.cluster.local \
+  --set externalDatabase.host=mariadb.s23daimgmlm-prod.svc.cluster.local \
 	--set externalDatabase.user=root \
 	--set externalDatabase.password=1234567890aA \
 	--set externalDatabase.database=my_database \
@@ -433,7 +433,7 @@ helm upgrade --install s23dajinswap-wordpress oci://registry-1.docker.io/bitnami
         - name: SUDO_ACCESS
           value: 'true'
         - name: TZ
-          value: Asia/Ho_Chi_Minh
+          value: Asia/Ho_Chi_MinhvolumePermissions
       resources: {}
       volumeMounts:
         - name: www-storage
@@ -445,3 +445,33 @@ helm upgrade --install s23dajinswap-wordpress oci://registry-1.docker.io/bitnami
       terminationMessagePolicy: File
       imagePullPolicy: Always
 ```
+- add more ftp server
+```
+    - name: ftp-server
+      image: garethflowers/ftp-server
+      ports:
+        - name: ftp
+          containerPort: 21
+          protocol: TCP
+      env:
+        - name: FTP_PASS
+          value: cN5iW6gV1lP1xS2w
+        - name: FTP_USER
+          value: webadmin
+      resources: {}
+      volumeMounts:
+        - name: www-storage
+          mountPath: /opt/synodus.com
+```
+
+```
+
+```
+customPostInitScripts:
+  enable-multisite.sh: |
+    #!/bin/bash
+    sudo chmod 775 /bitnami/wordpress/
+    sudo chmod 644 /bitnami/wordpress/wp-config.php
+  .htaccess: |
+    RewriteEngine On
+    RewriteBase /
