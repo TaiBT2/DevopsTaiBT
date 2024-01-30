@@ -1,0 +1,107 @@
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault-server
+  namespace: b22dadtubac-prod-cloud
+spec:
+  serviceName: vault-server
+  selector:
+    matchLabels:
+      app: vault-server
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: vault-data-server
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: default
+        volumeMode: Filesystem
+  template:
+    metadata:
+      labels:
+        app: vault-server
+    spec:
+      imagePullSecrets:
+        - name: regcred-repo-edsolabs
+      volumes:
+      - name: config
+        configMap:
+          name: b22dadtubac-be-vaultserver
+          defaultMode: 420
+      - name: home
+        emptyDir: {}
+      containers:
+      - name: vault-server
+        image: repo.aequitas.vn/stable/vault-server:v1
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: 1
+        command: ["vault", "server", "-config=/vault/config/config.hcl"]
+        env:
+        - name: VAULT_ADDR
+          value: "http://127.0.0.1:8200"
+        ports:
+        - containerPort: 8200
+        volumeMounts:
+        - name: config
+          mountPath: /vault/config
+        - name: vault-data-server
+          mountPath: /vault/data
+        - name: home
+          mountPath: /home/vault
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - echo -e "Checking for the availability of Vault server deployment"; while ! nc -z "banca-vault" 8200; do sleep 1; printf "-"; done; echo -e " >> Vault server has started";
+          initialDelaySeconds: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-server
+  namespace: b22dadtubac-prod-cloud
+spec:
+  selector:
+    app: vault-server
+  ports:
+  - port: 8200
+    targetPort: 8200
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: b22dadtubac-be-vaultserver
+  namespace: b22dadtubac-prod-cloud
+data:
+  config.hcl: |-
+    disable_mlock = true
+    ui = true
+
+    # Use postgresql as storage backend
+    storage "postgresql" {
+      connection_url = "postgres://cleodatabasedev:ALC3XQ21VN59QYP9ANQwq7L@cleodatabasedev.postgres.database.azure.com:5432/vault_db"
+    }
+
+    listener "tcp" {
+      address     = "0.0.0.0:8200"
+      tls_disable = 1
+    }
+
+    api_addr = "http://127.0.0.1:8200"
+    cluster_addr = "https://127.0.0.1:8201"
+    disable_mlock = true
+    ui = true
+    plugin_directory = "/vault/plugins"
+

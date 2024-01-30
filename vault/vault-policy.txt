@@ -1,0 +1,9 @@
+vault policy write service-policy-cleos - << EOF
+path "banca-secrets/*" {
+  capabilities = ["create", "read", "update", "patch", "delete", "list"]
+}
+
+path "sys/host-info" {
+  capabilities = ["read"]
+}
+EOF

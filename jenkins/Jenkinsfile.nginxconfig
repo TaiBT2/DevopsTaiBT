@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                // Add your build steps here
+            }
+            }
+            }
+
+            stage('SSH to Server') {
+                steps {
+                    sshagent(['my-ssh-key']) {
+                        sh 'ssh -i /path/to/public_key user@10.10.0.1'
+                    }
+                }
+            }
+}
