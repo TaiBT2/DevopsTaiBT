@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "project.fullname" . }}
+  namespace : {{ include "project.namespace" . }}
+  labels:
+    {{- include "project.standardLabels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" . ) | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonAnnotations "context" . ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.reloader.enabled }}
+      {{- include "project.reloader" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.checksum.enabled }}
+      {{- include "project.checksum" . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "project.matchLabels" . | nindent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.maxSurge }}
+      maxUnavailable: {{ .Values.maxUnavailable }}
+    type: RollingUpdate
+  template:
+    metadata:
+      labels: {{- include "project.standardLabels" . | nindent 8 }}
+        {{- if .Values.commonLabels }}
+          {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecrets.name }}
+      initContainers:
+      {{- if .Values.initContainers }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "project.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: {{ include "project.tplvaluesRender" ( dict "value" .Values.service.name "context" .) }}
+              containerPort: {{ include "project.tplvaluesRender" ( dict "value" .Values.service.targetPort "context" .) }}
+              protocol: {{ include "project.tplvaluesRender" ( dict "value" .Values.service.protocol "context" .) }}
+          {{- if .Values.resources.enabled }}
+          resources:
+            {{- include "project.tplvaluesRender" ( dict "value" .Values.resources.quota "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.command }}
+          command:
+            {{- include "project.tplvaluesRender" ( dict "value" .Values.command "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe:
+            {{- include "project.tplvaluesRender" ( dict "value" .Values.livenessProbe "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe:
+            {{- include "project.tplvaluesRender" ( dict "value" .Values.readinessProbe "context" .) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.startupProbe }}
+          startupProbe:
+            {{- include "project.tplvaluesRender" ( dict "value" .Values.startupProbe "context" .) | nindent 12 }}
+          {{- end }}
+      {{- if (include "project.createConfigmap" .) }}
+          volumeMounts:
+          
+          {{- if .Values.webconfig }}
+            - name: {{ include "project.configMapWeb" . }}
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: log-volume
+              mountPath: /var/log/nginx/
+          {{- end }}
+          {{- if .Values.environmentVarsFromFile }}
+            - name: {{ printf "%s-filecfg" (include "project.fullname" $) | trunc 63 | trimSuffix "-" }}
+              mountPath: /usr/src/app/build/.env
+              subPath:  {{ .Values.configmap.configfile }}
+          {{- end }}          
+      volumes:
+
+        {{- if .Values.webconfig }}
+        - name: {{ include "project.configMapWeb" . }}
+          configMap:
+            name: {{ include "project.configMapWeb" . }}
+        - name: log-volume
+          emptyDir:
+            sizeLimit: 1G
+        {{- end }}
+        {{- if .Values.configMapEnvVar }}
+        - name: {{ include "project.configMapEnvVar" . }}
+          configMap:
+            name: {{ include "project.configMapEnvVar" . }}
+        {{- end }}
+        {{- if .Values.environmentVarsFromFile }}
+        - name: {{ printf "%s-filecfg" (include "project.fullname" $) | trunc 63 | trimSuffix "-" }}
+          configMap:
+            name: {{ printf "%s-filecfg" (include "project.fullname" $) | trunc 63 | trimSuffix "-" }}
+        {{- end }}
+        
+      {{- end }}
+      restartPolicy: {{ .Values.restartPolicy }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ include "project.fullname" . }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

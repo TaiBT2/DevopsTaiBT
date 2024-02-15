@@ -544,3 +544,9 @@ sync; echo 1 > /proc/sys/vm/drop_caches
 `Preserving the client source IP`
 - Mặc dịnh target container sẽ không nhìn thấy ip gốc client. .spec.externalTrafficPolicy= Cluster (default)
 - ![alt](./image/svc-external.png)
+
+## Add role permission for keyvault step by step
+- step 1: go to resource that want to grant role access keyvault
+- step 2: go to security > indetity > system asssigned > turn on
+- step 3: go to keyvaul > IAM > add role assigment > choose permistion >  manage identity > select member
+** reference: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=portal%2Chttp

@@ -1,0 +1,46 @@
+{{- if .Values.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "project.fullname" . }}
+  namespace : {{ include "project.namespace" . }}
+  labels:
+    {{- include "project.standardLabels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" . ) | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonAnnotations "context" . ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.reloader.enabled }}
+      {{- include "project.reloader" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.checksum.enabled }}
+      {{- include "project.checksum" . | nindent 4 }}
+    {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "project.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

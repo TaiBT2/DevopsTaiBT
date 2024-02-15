@@ -1,0 +1,49 @@
+{{- if (include "project.createConfigmap" .) }}
+{{- if .Values.webconfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "project.configMapWeb" . }}
+  namespace : {{ include "project.namespace" . }}
+  labels:
+    {{- include "project.standardLabels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "project.tplvaluesRender" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  default.conf: {{- include "project.tplvaluesRender" ( dict "value" .Values.webconfig "context" $ ) | nindent 4 }}
+{{- end }}
+
+{{- if .Values.environmentVariables }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "project.configMapEnvVar" . }}
+  namespace : {{ include "project.namespace" . }}
+  labels:
+    {{- include "project.standardLabels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+    {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "project.tplvaluesRender" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+data:
+  {{- include "project.tplvaluesRender" ( dict "value" .Values.environmentVariables "context" $ ) | nindent 2 }}
+{{- end }}
+
+{{- if .Values.environmentVarsFromFile -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-filecfg" (include "project.fullname" $) | trunc 63 | trimSuffix "-" }}
+  namespace : {{ include "project.namespace" . }}
+data:
+  {{- (.Files.Glob "appconfig/*" ).AsConfig | nindent 2 }}
+{{- end }}
+{{- end -}}

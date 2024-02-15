@@ -1,0 +1,227 @@
+fullnameOverride: "s23daimgmlm-be"
+
+image:
+  repository: "repo.aequitas.vn/uat/s23daimgmlm/s23daimgmlm-be"
+  pullPolicy: Always
+  tag: "2024-01-31_87"
+
+imagePullSecrets:
+  name: regcred-repo-edsolabs
+
+replicaCount: 1
+
+restartPolicy: Always
+
+maxSurge: 1
+maxUnavailable: 0
+
+namespace: ""
+environmentZone: "uat"
+type: "backend"
+
+commonLabels:
+  company: "synodus"
+  department: "gpdv"
+  project: "s23daimgmlm"
+
+commonAnnotations: {}
+
+customAnnotations:
+  reloader:
+    enabled: false
+    mode: auto
+  checksum:
+    enabled: true
+
+configmap:
+  existingConfigmap: ""
+  createConfigmap: "-"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  enabled: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  enabled: true
+  quota:
+    limits:
+      cpu: 100m
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+affinity: true
+
+PodDisruptionBudget:
+  enabled: false
+
+command: []
+  # - java
+  # - -XX:+HeapDumpOnOutOfMemoryError
+  # - -XX:HeapDumpPath=/dumps/oom.bin
+  # - -jar
+  # - s23daimgmlm-fe-cms.jar
+  # - --spring.config.location=config/application.yml
+
+service:
+  annotations:
+    metalb.universe.tf/allow-shared-ip: s23daimgmlm-svc
+  name: &servicePortName "cms-tcp"
+  port: &servicePort 3333
+  type: ClusterIP
+  targetPort: *servicePort
+  protocol: TCP
+  clusterIP: ""
+  externalTrafficPolicy: Cluster
+  nodePort: 32108
+  loadBalancerIP: ""
+  ## e.g:
+  ## loadBalancerSourceRanges:
+  ##   - 10.0.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  sessionAffinity: None
+  sessionAffinityConfig: {}
+
+ingress:
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/client_body_buffer_size: 100M
+    nginx.ingress.kubernetes.io/client_header_buffer_size: 100M
+    nginx.ingress.kubernetes.io/client_max_body_size: 128M
+    nginx.ingress.kubernetes.io/large_client_header_buffers: 8 512k
+    nginx.ingress.kubernetes.io/limit-rps: '20'
+    nginx.ingress.kubernetes.io/proxy-body-size: 25m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 256k
+    nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '240'
+    nginx.ingress.kubernetes.io/proxy-http-version: '1.1'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '240'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '240'
+    nginx.ingress.kubernetes.io/server_names_hash_bucket_size: '128'
+    nginx.ingress.kubernetes.io/backend-protocol: HTTP
+    # cert-manager.io/cluster-issuer: letsencrypt-production
+  hosts:
+    - host: s23daimgmlm-uat-api-payment.synodus.com
+      paths:
+        - path: /
+          # pathType: ImplementationSpecific
+          pathType: Prefix
+  tls:
+    - hosts:
+      - s23daimgmlm-uat-api-payment.synodus.com
+      secretName: synodus-com-tls
+  snippets:
+    enabled: false
+    content: |
+      location / {
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        try_files $uri /index.html =404;
+      }
+
+livenessProbe: {}
+  # httpGet:
+  #   path: /actuator/info
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # initialDelaySeconds: 90
+  # failureThreshold: 1
+  # timeoutSeconds: 10
+  # periodSeconds: 90
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: *servicePortName
+    scheme: HTTP
+  timeoutSeconds: 1
+  periodSeconds: 10
+  successThreshold: 1
+  failureThreshold: 3
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # initialDelaySeconds: 60
+  # timeoutSeconds: 10
+
+startupProbe: {}
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # failureThreshold: 30
+  # periodSeconds: 10
+
+webconfig: [] #|-
+  # server {
+  #     listen       80  default_server;
+  #     server_name  _;
+  #     etag off;
+  #     server_tokens off;
+  #     keepalive_requests 100000;
+  #     keepalive_timeout 7200s;
+  #     gzip on;
+  #     gzip_min_length 1000;
+  #     gzip_proxied expired no-cache no-store private auth;
+  #     gzip_types text/plain text/css text/js text/xml text/javascript application/javascript application/x-javascript application/json application/xml application/rss+xml image/svg+xml;
+  #     gzip_disable msie6;
+  #     client_body_buffer_size  100M;
+  #     client_header_buffer_size 100M;
+  #     large_client_header_buffers 8 512k;
+  #     client_max_body_size 128M;
+  #     add_header X-Content-Type-Options "nosniff" always;
+  #     location / {
+  #         root /usr/share/nginx/html;
+  #         index index.html;
+  #         proxy_set_header Connection keep-alive;
+
+  #         proxy_http_version 1.1;
+  #         try_files $uri /index.html =404;
+  #     }
+  #     location = /actuator/health {
+  #         access_log off;
+  #         add_header 'Content-Type' 'application/json';
+  #         return 200 '{"status":"UP"}';
+  #     }
+  # }
+
+environmentVarsFromFile: false
+
+environmentVariables: {}

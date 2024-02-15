@@ -1,0 +1,26 @@
+{{- if .Values.PodDisruptionBudget.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "project.fullname" . }}
+  namespace : {{ include "project.namespace" . }}
+  labels:
+    {{- include "project.standardLabels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonLabels "context" . ) | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+      {{- include "project.tplvaluesRender" ( dict "value" .Values.commonAnnotations "context" . ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.reloader.enabled }}
+      {{- include "project.reloader" . | nindent 4 }}
+    {{- end }}
+    {{- if .Values.customAnnotations.checksum.enabled }}
+      {{- include "project.checksum" . | nindent 4 }}
+    {{- end }}  
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels: {{- include "project.matchLabels" . | nindent 6 }}
+{{- end }}

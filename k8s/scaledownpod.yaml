@@ -2,9 +2,9 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: scale-down-job
-  namespace: s23daimgmlm-prod
+  namespace: b22dadtubac-uat-cloud
 spec:
-  schedule: 01 19 * * *
+  schedule: 59 19 * * *
   timeZone: Asia/Ho_Chi_Minh
   jobTemplate:
     metadata:
@@ -22,7 +22,7 @@ spec:
                 - /bin/sh
                 - '-c'
                 - >-
-                  kubectl scale deployment -n s23daimgmlm-prod --replicas
+                  kubectl scale deployment -n b22dadtubac-uat-cloud --replicas
                   0 --all 
               resources: {}
               imagePullPolicy: IfNotPresent
@@ -33,9 +33,9 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: scale-up-job
-  namespace: s23daimgmlm-prod
+  namespace: b22dadtubac-uat-cloud
 spec:
-  schedule: 59 22 * * *
+  schedule: 59 07 * * *
   timeZone: Asia/Ho_Chi_Minh
   jobTemplate:
     metadata:
@@ -53,8 +53,8 @@ spec:
                 - /bin/sh
                 - '-c'
                 - >-
-                  kubectl scale deployment -n s23daimgmlm-prod --replicas
-                  2 --all 
+                  kubectl scale deployment -n b22dadtubac-uat-cloud --replicas
+                  0 --all 
               resources: {}
               imagePullPolicy: IfNotPresent
           restartPolicy: OnFailure
