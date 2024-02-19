@@ -1,5 +1,5 @@
 ## install promethus
-- helm install prometheus oci://registry-1.docker.io/bitnamicharts/kube-prometheus -n namespace_name
+- helm install prometheus oci://registry-1.docker.io/bitnamicharts/kube-prometheus -n namespace_name -f vaulues.yaml
 - create connection grafana: url : http://prometheus-kube-prometheus-prometheus.observability.svc:9090
 - create dashboard > import json
 - copy bellow json and parse
