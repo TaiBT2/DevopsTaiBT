@@ -232,4 +232,14 @@ data:
 - Step 6: helm upgrade --install kibana -n observability  . --create-namespace -f kibana.yaml
 ## Apm
 helm install apm-server elastic/apm-server -n observability --set imageTag=8.5.1 -f apm.yaml
+## ELASTICSEARCH STADARDLONE
+- install elasticseach
+```
+helm upgrade --install elasticsearch oci://registry-1.docker.io/bitnamicharts/elasticsearch -n devops -f elasticsearch-values-standardlone.yaml
+
+```
+- install kibana
+```
+helm upgrade  --install kibana oci://registry-1.docker.io/bitnamicharts/kibana  -n devops -f kibana-values-sd.yaml
+```
 

@@ -1,0 +1,13 @@
+elasticsearch:
+  hosts:
+  - "elasticsearch.devops.svc.cluster.local"
+  port: 9200
+  security:
+    auth:
+      enabled: true
+      createSystemUser: true
+      kibanaPassword: "9rEh5JAEj1"
+      elasticsearchPasswordSecret: "elasticsearch"
+    tls:
+      enabled: true
+      verificationMode: "none"

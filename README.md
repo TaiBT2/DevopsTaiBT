@@ -39,20 +39,23 @@ Note dùng để tóm tắt kinh nghiệm devops
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: banca-developer
+  name: wap-developer
+  namespace: s23dajinswap-dev
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: banca-developer-token
+  name: wap-developer-token
+  namespace: s23dajinswap-dev
   annotations:
-    kubernetes.io/service-account.name: banca-developer
+    kubernetes.io/service-account.name: wap-developer
 type: kubernetes.io/service-account-token
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: banca-clusterrole
+  namespace: s23dajinswap-dev
 rules:
 - apiGroups: [""]
   resources: ["pods"]
@@ -70,10 +73,10 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: b22dadtubac-dev-cloud
-  name: vault-dev
+  namespace: s23dajinswap-dev
+  name: wap-dev
 rules:
-- apiGroups: ["*"] # 
+- apiGroups: ["*"]
   resources: ["*"]
   verbs: ["*"]
 ---
@@ -83,14 +86,35 @@ metadata:
   name: banca-clusterrolebinding
 subjects:
 - kind: ServiceAccount
-  name: banca-developer
-  namespace: default
+  name: wap-developer
+  namespace: s23dajinswap-dev
 roleRef:
   kind: ClusterRole
   name: banca-clusterrole
   apiGroup: rbac.authorization.k8s.io
 
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: jane # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+
 ```
+
+
 # GCE Controller
 - service for ingress type: NodePort
 - ingress form
