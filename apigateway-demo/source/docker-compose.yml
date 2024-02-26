@@ -1,0 +1,14 @@
+version: '3'
+services:
+  b22dadtubac-be-apigateway:
+    build: .
+    image: b22dadtubac-be-apigateway
+    container_name: b22dadtubac-be-apigateway
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+    network_mode: bridge
+    volumes:
+      - .:/etc/krakend
+  

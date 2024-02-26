@@ -1,0 +1,366 @@
+@Library('banca') _
+bancaPipelineApigateway(project: "b22dadtubac")
+// //transition Jira edit
+// def transitionStart = [transition:[id:'11']]
+// def transitionResolve = [transition:[id:'21']]
+// def transitionReady4Test = [transition:[id:'31']]
+// def transitionReady4Product = [transition:[id:'151']]
+
+// def modl = "${currentBuild.fullProjectName}".tokenize( '/' )
+// def submodl = "${modl[1]}".tokenize( '-' )
+// def projectFolder = "${modl[1]}".substring(2)
+
+// def lastMergedBranch(){
+//     def mergedBranch = sh(returnStdout: true, script: 'git log --merges --oneline -1').trim() =~ /([A-Z0-9]+-[0-9]+)/
+//     if ( mergedBranch ) {
+//         def jiraId = mergedBranch[0][0]
+//         return jiraId
+//     }
+//     else {
+//         def jiraId = null
+//         return jiraId
+//     }
+// }
+
+// pipeline {
+//     environment {
+//         PROJECT = "B22DADTUBAC"
+//         PROJECT_lowercase = "${PROJECT.toLowerCase()}"
+//         ENV = "DEVELOP-GCP"
+//         ENV_lowercase = "${ENV.toLowerCase()}"
+//         MODULE = "${modl[1]}"
+//         SHORT_MODULE = "${submodl[0]}"
+//         REPO = "repo.edsolabs.com/stable/${SHORT_MODULE}"
+//         SUB_TAG = sh(returnStdout: true, script: 'date +%Y%m%d%H%M%S').trim()
+//         // DNS = "${PROJECT}-${ENV}-${SHORT_MODULE}.synodus.vn"
+//         IMAGE = "${REPO}/${MODULE}"
+//         // TAG = "${BUILD_NUMBER}-${SUB_TAG}"
+//         TAG = "latest"
+//         HELM_PATH = "${PROJECT_lowercase}/helmcharts/${MODULE}"
+//         PROJECTFOLDER = "${projectFolder}"
+//         LAST_MERGED = lastMergedBranch()
+//     }
+//     agent {
+//         kubernetes {
+//           idleMinutes 5
+//           showRawYaml false
+//           yaml '''
+//             apiVersion: v1
+//             kind: Pod
+//             metadata:
+//               labels:
+//                 app: jenkins-agent
+//             spec:
+//               imagePullPolicy: IfNotPresent
+//               imagePullSecrets:
+//               - name: regcred-repo-edsolabs
+//               containers:
+//               - name: node
+//                 image: repo.edsolabs.com/stable/node:14.19.2-alpine
+//                 command:
+//                 - cat
+//                 tty: true
+//               - name: kubectl
+//                 image: dtzar/helm-kubectl
+//                 command:
+//                 - cat
+//                 tty: true
+//                 volumeMounts:
+//                 - name: data
+//                   mountPath: /data
+//               - name: gitleaks
+//                 image: zricethezav/gitleaks
+//                 command:
+//                 - cat
+//                 tty: true
+//               - name: cyclonedx
+//                 image: repo.edsolabs.com/stable/cdxgen:4.0.29
+//                 command:
+//                 - cat
+//                 tty: true
+//               - name: sonarqube
+//                 image: sonarsource/sonar-scanner-cli
+//                 command:
+//                 - cat
+//                 tty: true
+//               - name: docker
+//                 image: docker:dind
+//                 command:
+//                 - cat
+//                 tty: true
+//                 env:
+//                 - name: DOCKER_HOST
+//                   value: tcp://dind:2375
+//               - name: devops-tools
+//                 image: repo.edsolabs.com/stable/cdxgen-appcenter-python:latest
+//                 command:
+//                 - cat
+//                 tty: true
+//                 volumeMounts:
+//                 - name: data
+//                   mountPath: /data
+//               - name: helm
+//                 image: alpine/helm:latest
+//                 command:
+//                 - cat
+//                 tty: true
+//                 volumeMounts:
+//                 - name: data
+//                   mountPath: /data
+//               volumes:
+//               - name: data
+//                 persistentVolumeClaim:
+//                     claimName: jenkins-agent-pv
+//             '''
+//         }
+//     }
+//     stages {
+//         stage ("DevOps Check") {
+//             parallel {
+//                 stage ("Git rules") {
+//                     when {
+//                         expression { env.BRANCH_NAME ==~ /MR-\d+/ }
+//                     }
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                             if ( env.GIT_BRANCH ==~ /.*[A-Z0-9]+-[0-9]+.*/ && env.CHANGE_TITLE ==~ /^[A-Z0-9]+-[0-9]+.*/ ) {
+//                                 println("Branch Name is like Jira ticket");
+//                                 echo env.GIT_BRANCH;
+//                                 echo env.CHANGE_TITLE;
+//                                 currentBuild.result='SUCCESS'
+//                             } else {
+//                                 println("Branch Name or Merge Title is NOT like Jira ticket");
+//                                 echo env.GIT_BRANCH;
+//                                 echo env.CHANGE_TITLE;
+//                                 currentBuild.result='FAILURE'
+//                             }
+//                         }
+//                     }
+//                 }
+//                 stage ("Secret Scanning") {
+//                     when {
+//                         branch 'develop-gcp'
+//                     }
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container("gitleaks") {
+//                             sh """
+//                                 gitleaks detect -v -s . -f json -r gitleaks.json --exit-code 0
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         stage ("Develop deployment") {
+//             environment {
+//                 NODE_PORT = "32150"
+//             }
+//             when {
+//                 branch 'develop-gcp'
+//             }
+//             stages {
+//                 stage ("Build docker") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container('docker') {
+//                             withCredentials([
+//                                 usernamePassword(
+//                                     credentialsId: "edsorepo",
+//                                     usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASS'
+//                                 )
+//                             ]) {
+//                                 sh """
+//                                     echo \${REGISTRY_PASS} | docker login repo.edsolabs.com -u \${REGISTRY_USER} --password-stdin
+//                                 """
+//                             }
+//                         }
+//                     }
+//                 }
+//                 stage ("Deploy Dev environment") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+
+//                         container("helm") {
+//                             sh """
+//                                 yes | cp -r /data/HELM-TEMPLATES/\${HELM_PATH} .
+//                             """
+//                             sh """
+//                                 mv source/krakend.dev-gcp.json source/krakend.\${ENV_lowercase}.json
+//                                 # cat source/krakend.\${ENV_lowercase}.json
+//                             """
+//                             sh """
+//                                 sed -i -r "s|(^[ ]+nodePortHttp:[ ])([0-9]+?)(\$)|\\1${NODE_PORT}\\3|" \${MODULE}/values.yaml
+//                                 sed -n -E '/^[ ]+nodePortHttp:[ ]*/p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 sed -i -e 's/^/  /g' source/krakend.\${ENV_lowercase}.json
+//                                 sed -i -n -e '1,/^krakendConfigJson:/{ p; d; }' -e 'r source/krakend.${ENV_lowercase}.json' -e 'q' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 # sed -n -e '/^krakendConfigJson:/,\$p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 helm upgrade --install --force \${MODULE} \${MODULE} -n \${PROJECT_lowercase}-\${ENV_lowercase} --set namespace=\${PROJECT_lowercase}-\${ENV_lowercase} --set image.repository=\${IMAGE} --set image.tag=\${TAG} --kubeconfig /data/KUBE/GCP-Cluster
+//                             """
+//                         }
+                        
+//                         container("kubectl") {
+//                             sh """
+//                                 kubectl rollout restart deployment b22dadtubac-be-apigateway -n \${PROJECT_lowercase}-\${ENV_lowercase}  --kubeconfig /data/KUBE/GCP-Cluster 
+//                             """
+//                         }
+//                     }
+//                 }
+
+//             }
+//         }
+//         stage ("Staging deployment") {
+//             environment {
+//                 ENV = "STAGING-GCP"
+//                 ENV_lowercase = "${ENV.toLowerCase()}"
+//                 REPO = "repo.edsolabs.com/${ENV_lowercase}"
+//                 NODE_PORT = "32120"
+//                 DOMAIN = 'b22dadtubac-staging-gcp-apigw.synodus.com'
+//             }
+//             when {
+//                 tag pattern: "staging-gcp-\\d+.\\d+.\\d+", comparator: "REGEXP"
+//             }
+//             stages {
+//                 stage ("Build docker") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container('docker') {
+//                             withCredentials([
+//                                 usernamePassword(
+//                                     credentialsId: "edsorepo",
+//                                     usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASS'
+//                                 )
+//                             ]) {
+//                                 sh """
+//                                     echo \${REGISTRY_PASS} | docker login repo.edsolabs.com -u \${REGISTRY_USER} --password-stdin
+//                                     # docker build -f Dockerfile --tag \${IMAGE}:\${TAG} .
+//                                     # docker push \${IMAGE}:\${TAG}
+//                                 """
+//                             }
+//                         }
+//                     }
+//                 }
+//                 stage ("Deploy Staging environment") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container("helm") {
+//                             sh """
+//                                 yes | cp -r /data/HELM-TEMPLATES/\${HELM_PATH} .
+//                             """
+//                             sh """
+//                                 # cat source/krakend.\${ENV_lowercase}.json
+//                             """
+//                             sh """
+//                                 sed -i -r "s|(^[ ]+nodePortHttp:[ ])([0-9]+?)(\$)|\\1${NODE_PORT}\\3|" \${MODULE}/values.yaml
+//                                 sed -n -E '/^[ ]+nodePortHttp:[ ]*/p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 sed -i -e 's/^/  /g' source/krakend.\${ENV_lowercase}.json
+//                                 sed -i -n -e '1,/^krakendConfigJson:/{ p; d; }' -e 'r source/krakend.${ENV_lowercase}.json' -e 'q' \${MODULE}/values.yaml
+//                                 # sed -i -e '/^krakendConfigJson:/ r source/krakend.${ENV_lowercase}.json' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 # sed -n -e '/^krakendConfigJson:/,\$p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 helm upgrade --install --force \${MODULE} \${MODULE} -n \${PROJECT_lowercase}-\${ENV_lowercase} --set env=staging --set namespace=\${PROJECT_lowercase}-\${ENV_lowercase}   --set ingress.hosts[0].host=\${DOMAIN} --set ingress.hosts[0].paths[0].path=/ --set ingress.hosts[0].paths[0].pathType=ImplementationSpecific --set ingress.tls[0].hosts[0]=\${DOMAIN} --set image.repository=\${IMAGE} --set image.tag=\${TAG} --set-file krakendConfigJson=source/krakend.\${ENV_lowercase}.json --kubeconfig /data/KUBE/GCP-Cluster
+//                             """
+//                         }
+//                          container("kubectl") {
+//                             sh """
+//                                 kubectl rollout restart deployment b22dadtubac-be-apigateway -n \${PROJECT_lowercase}-\${ENV_lowercase}  --kubeconfig /data/KUBE/GCP-Cluster 
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         stage ("UAT deployment") {
+//             environment {
+//                 ENV = "UAT-GCP"
+//                 ENV_lowercase = "${ENV.toLowerCase()}"
+//                 IMAGE = "${REPO}/${MODULE}"
+//                 NODE_PORT = "32140"
+//                 DOMAIN = 'b22dadtubac-uat-gcp-apigw.synodus.com'
+//             }
+//             when {
+//                 tag pattern: "uat-gcp-\\d+.\\d+.\\d+", comparator: "REGEXP"
+//             }
+//             stages {
+//                 stage ("Build docker") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container('docker') {
+//                             withCredentials([
+//                                 usernamePassword(
+//                                     credentialsId: "edsorepo",
+//                                     usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASS'
+//                                 )
+//                             ]) {
+//                                 sh """
+//                                     echo \${REGISTRY_PASS} | docker login repo.edsolabs.com -u \${REGISTRY_USER} --password-stdin
+//                                     # docker build -f Dockerfile --tag \${IMAGE}:\${TAG} .
+//                                     # docker push \${IMAGE}:\${TAG}
+//                                 """
+//                             }
+//                         }
+//                     }
+//                 }
+//                 stage ("Deploy UAT environment") {
+//                     steps {
+//                         script {
+//                             FAILED_STAGE=env.STAGE_NAME
+//                         }
+//                         container("helm") {
+//                             sh """
+//                                 yes | cp -r /data/HELM-TEMPLATES/\${HELM_PATH} .
+//                             """
+//                             sh """
+//                                 # cat source/krakend.\${ENV_lowercase}.json
+//                             """
+//                             sh """
+//                                 sed -i -r "s|(^[ ]+nodePortHttp:[ ])([0-9]+?)(\$)|\\1${NODE_PORT}\\3|" \${MODULE}/values.yaml
+//                                 sed -n -E '/^[ ]+nodePortHttp:[ ]*/p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 sed -i -e 's/^/  /g' source/krakend.\${ENV_lowercase}.json
+//                                 sed -i -n -e '1,/^krakendConfigJson:/{ p; d; }' -e 'r source/krakend.${ENV_lowercase}.json' -e 'q' \${MODULE}/values.yaml
+//                                 # sed -i -e '/^krakendConfigJson:/ r source/krakend.${ENV_lowercase}.json' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 # sed -n -e '/^krakendConfigJson:/,\$p' \${MODULE}/values.yaml
+//                             """
+//                             sh """
+//                                 helm upgrade --install --force \${MODULE} \${MODULE} -n \${PROJECT_lowercase}-\${ENV_lowercase} --set ingress.hosts[0].host=\${DOMAIN} --set ingress.hosts[0].paths[0].path=/ --set ingress.hosts[0].paths[0].pathType=ImplementationSpecific --set ingress.tls[0].hosts[0]=\${DOMAIN} --set env=uat --set namespace=\${PROJECT_lowercase}-\${ENV_lowercase} --set image.repository=\${IMAGE} --set image.tag=\${TAG} --set-file krakendConfigJson=source/krakend.\${ENV_lowercase}.json --kubeconfig /data/KUBE/GCP-Cluster
+//                             """
+//                         }
+//                          container("kubectl") {
+//                             sh """
+//                                 kubectl rollout restart deployment b22dadtubac-be-apigateway -n \${PROJECT_lowercase}-\${ENV_lowercase}  --kubeconfig /data/KUBE/GCP-Cluster 
+//                             """
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }

@@ -1,0 +1,5361 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "KrakenD - API Gateway",
+  "timeout": "30000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "endpoints": [
+    {
+      "endpoint": "/v1/account/{id}/activate",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload",
+        "dm"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/account/{id}/activate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/account/{id}/owners",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload",
+        "dm"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/account/{id}/owners",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/account/merge-email",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/account/merge-email",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/account/merge-email",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "input_query_strings": ["hash"],
+      "backend": [
+        {
+          "url_pattern": "/account/merge-email",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/account/verify",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/account/verify",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/apple",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["id-token"],
+      "backend": [
+        {
+          "url_pattern": "/auth/apple",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/google",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["id-token"],
+      "backend": [
+        {
+          "url_pattern": "/auth/google",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/engagement/onfido/upload",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/nflow/onfido/upload",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": false
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/account/generate-invitation-code",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization"],
+      "input_query_strings": ["userId"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/account/generate-invitation-code",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/account/merge-email",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/account/merge-email",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/user-manager/{id}/update",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/user-manager/{id}/update",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/onfido/webhook",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/onfido/webhook",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-sha2-signature",
+        "x-datadog-trace-id"
+      ]
+    },
+    {
+      "endpoint": "/v1/contact/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/create/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/create/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/create/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/create/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/delete/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/delete/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/exists/{address}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/exists/{address}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/list",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/contact/update/{id}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/update/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/kyc-v2",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/kyc-v2",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/kyc-v2",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/kyc-v2",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/local-bank",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["savingsId"],
+      "backend": [
+        {
+          "url_pattern": "/local-bank",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for",
+        "Authorization"
+      ]
+    },
+    {
+      "endpoint": "/local-bank/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/local-bank/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for",
+        "x-bc-payload",
+        "Content-Type",
+        "Authorization"
+      ]
+    },
+    {
+      "endpoint": "/local-bank/countries",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/local-bank/countries",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/local-bank/countries/{code}/banks",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/local-bank/countries/{code}/banks",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/local-bank/create",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/local-bank/create",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/local-bank/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/local-bank/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ]
+    },
+    {
+      "endpoint": "/local-bank/list",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/local-bank/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ]
+    },
+    {
+      "endpoint": "/local-bank/list-product",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/local-bank/list-product",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "dt", "dm", "ov", "ct", "lang", "x-forwarded-for"]
+    },
+    {
+      "endpoint": "/stock",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/stock/buy/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/buy/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type", "x-bc-payload"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/buy/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/buy/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/detail/account/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/detail/account/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/list",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/stock/search",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["keyword"],
+      "backend": [
+        {
+          "url_pattern": "/stock/search",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/list/account",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/list/account",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/list/recent",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/list/recent",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/sell/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/sell/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type", "x-bc-payload"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/sell/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/sell/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/transfer/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/transfer/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type", "x-bc-payload"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/transfer/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/transfer/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/stock/watch",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/stock/watch",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/v1/alias/{account_no}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "alias/{account_no}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_query_strings": ["account_no"],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/alias/availables",
+      "method": "GET",
+      "input_query_strings": ["token", "alias"],
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/alias/availables",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/alias/create/{symbol}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "alias/create/{symbol}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_query_strings": ["alias"],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/api-docs/engagement/swagger",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "url_pattern": "/swagger",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/api-docs/engagement/swagger/{context-path}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "url_pattern": "/swagger/{context-path}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/account/{casa_id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "auth/account/{casa_id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/auth/accounts",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "input_query_strings": ["type"],
+      "backend": [
+        {
+          "url_pattern": "/auth/accounts",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/authentication-code",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/google-authenticator/generate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/authentication-code",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "x-bc-payload", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/google-authenticator/change",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/auto-convert",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/auth/auto-convert",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/change-password",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/change-password",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/check-mail",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/check-mail",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "x-forwarded-for", "Content-Type", "x-bc-payload"]
+    },
+    {
+      "endpoint": "/v1/auth/check-mail-exits",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/check-mail",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/forgot-password",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "x-bc-payload", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/forgot-password",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/login",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "bc-sign",
+        "bc-nonce",
+        "Content-Type",
+        "x-bc-payload",
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/auth/login",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/login-v2",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "bc-sign",
+        "bc-nonce",
+        "Content-Type",
+        "x-bc-payload",
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/auth/login-v2",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/logout",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/auth/logout",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/auth/me",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/me",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/me-v2",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": true,
+          "disable_jwk_security": true,
+          "scopes_matcher": "any",
+          "roles": ["user-demo"]
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/v2/auth/me",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/v1/auth/otp/generate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/otp/generate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/profile",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/profile",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/refresh",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "Content-Type",
+        "Authorization",
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/auth/refresh",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/refresh-token",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/refresh-token",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/register",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/register",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "x-bc-payload",
+        "Content-Type",
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for"
+      ]
+    },
+    {
+      "endpoint": "/v1/auth/register-v2",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/register-v2",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "x-forwarded-for", "Content-Type", "x-bc-payload"]
+    },
+    {
+      "endpoint": "/v1/auth/register-v2/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/register-v2/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "x-forwarded-for", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/auth/security",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "x-bc-payload", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/security",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/security/pin",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/auth/security/pin",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/auth/security-advance",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/auth/security-advance",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/auth/validate-email",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/auth/validate-email",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/beneficiary",
+      "input_query_strings": ["page", "size", "search"],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/beneficiary",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/beneficiary",
+      "input_query_strings": ["email"],
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/beneficiary",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/beneficiary",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/beneficiary",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/botsync2/dialogflow/webhook",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/dialogflow/webhook",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["x-forwarded-for", "Content-Type", "Authorization"]
+    },
+    {
+      "endpoint": "/v1/botsync2/sendbird/health",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/sendbird/health",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["x-forwarded-for", "Content-Type", "Authorization"]
+    },
+    {
+      "endpoint": "/v1/botsync2/sendbird/webhook-bot",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/sendbird/webhook-bot",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["x-forwarded-for", "Content-Type", "Authorization"]
+    },
+    {
+      "endpoint": "/v1/botsync2/sendbird/webhook-chat",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/sendbird/webhook-chat",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["x-forwarded-for", "Content-Type", "Authorization"]
+    },
+    {
+      "endpoint": "/v1/botsync2/sendbird/webhook-desk",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/sendbird/webhook-desk",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["x-forwarded-for", "Content-Type", "Authorization"]
+    },
+
+    {
+      "endpoint": "/v1/buy-cypto-currency/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "x-bc-payload",
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/buy-cypto-currency/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/buy-cypto-currency/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/buy-cypto-currency/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/buy-cypto-currency/validate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/buy-cypto-currency/validate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/cleo/accounts",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/cleo/accounts",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/cleo/accounts/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/cleo/accounts/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/cleo/accounts/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type",
+        "x-bc-payload"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/cleo/accounts/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/user-manager/update-attribute",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "backend": [
+        {
+          "url_pattern": "/user-manager/update-attribute",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/cleo/accounts/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type",
+        "x-bc-payload"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/cleo/accounts/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/cleo/change-alias",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/cleo/change-alias",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/collectible/list",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge/collectible/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/collectible/product/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge/collectible/product/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/collectible/product/list",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["tag"],
+      "backend": [
+        {
+          "url_pattern": "/concierge/collectible/product/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/collectible/tag",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["type"],
+      "backend": [
+        {
+          "url_pattern": "/concierge/collectible/tag",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/isSave",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge/isSave",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/travel/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge/travel/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge/travel/list",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge/travel/list",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge-order/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge-order/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/concierge-order/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/concierge-order/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/auto-swap",
+      "method": "PATCH",
+      "input_query_strings": ["enable"],
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/auto-swap",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/avatar",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/avatar",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/display-name",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/display-name",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/coins",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "config/coins",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di"]
+    },
+    {
+      "endpoint": "/v1/config/coins/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/coins/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di"]
+    },
+    {
+      "endpoint": "/v1/config/currency",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/config/currency",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/config/deposit/wallet",
+      "input_query_strings": ["network"],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "deposit/wallet?",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/config/exchange/prices",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/config/exchange/prices",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/lang",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/config/lang",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/networks",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/admin-config/networks",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/config/networks/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/admin-config/networks/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/config/theme",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/theme",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/config/wallet/{symbol}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "config/wallet/{symbol}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/config/wallet-v2/{network}/{wallet}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/config/wallet-v2/{network}/{wallet}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/contact",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": [
+        "isFavorite",
+        "size",
+        "page",
+        "type",
+        "network",
+        "address"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/contact",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/contact/{id}",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/contact/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/contact/favorites",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/favorites",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/contact/favorites-recents",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": [
+        "isFavorite",
+        "size",
+        "page",
+        "type",
+        "network",
+        "address"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/contact/favorites-recents",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/contact/search",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/search",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/contact/validate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/contact/validate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/credit-card/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/credit-card/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/credit-card/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/credit-card/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/credit-line",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/credit-line",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/currency-convert",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/currency-convert",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di", "x-bc-payload"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/currency-convert/exchange",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/currency-convert/exchange",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/device-management",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["di", "x-forwarded-for", "Authorization"],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/device-management",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/device-management/{deviceId}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["di", "x-forwarded-for", "Authorization"],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/device-management/{deviceId}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/kyc",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "backend": [
+        {
+          "url_pattern": "/kyc",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/kyc",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/kyc",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    },
+    {
+      "endpoint": "/v1/nflow/bc-worker/bc-fetch",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/bc-fetch",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-bcworker-dev.demo-develop-gcp.svc.demo-dev.cloud.:3021"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/bc-worker/bc-input-converter",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/bc-input-converter",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-bcworker-dev.demo-develop-gcp.svc.demo-dev.cloud.:3021"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/botsync/sendbird/channel/{channelUrl}",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false,
+          "propagate_claims": [
+            ["preferred_username", "x-user"],
+            ["email", "x-email"],
+            ["realm_access.role", "x-role"]
+          ]
+        }
+      },
+      "input_headers": ["Content-Type", "x-user", "x-email", "x-role"],
+      "backend": [
+        {
+          "url_pattern": "/sendbird/channel/{channelUrl}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/botsync/sendbird/tickets/transfer",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false,
+          "propagate_claims": [
+            ["preferred_username", "x-user"],
+            ["email", "x-email"],
+            ["realm_access.role", "x-role"]
+          ]
+        }
+      },
+      "input_headers": ["Content-Type", "x-user", "x-email", "x-role"],
+      "backend": [
+        {
+          "url_pattern": "/sendbird/tickets/transfer",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-botsynservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3016"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/engagement/s3-aws/presigned-url",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "input_query_strings": ["type"],
+      "backend": [
+        {
+          "url_pattern": "/s3-aws/presigned-url",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/nflow/engagement/s3-aws/presigned-url-get",
+      "method": "POST",
+      "input_query_strings": ["uid"],
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/s3-aws/presigned-url-get",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/engagement/total-balance",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type"],
+      "input_query_strings": ["userId"],
+      "backend": [
+        {
+          "url_pattern": "/total-balance",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/behavior",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["userId", "moreThanTime"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false,
+          "propagate_claims": [
+            ["preferred_username", "x-user"],
+            ["email", "x-email"],
+            ["realm_access.role", "x-role"]
+          ]
+        }
+      },
+      "input_headers": ["Content-Type", "x-user", "x-email", "x-role"],
+      "backend": [
+        {
+          "url_pattern": "/behavior",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+
+    {
+      "endpoint": "/v1/nflow/onboarding/users/new",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/users/new",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/users",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/users",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/wish-list/{id}",
+      "method": "DELETE",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/wish-list/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "DELETE",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/onboarding/wish-list/detail",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/wish-list/detail",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/wallet/notification",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/wallet/notification",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-casaservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3012"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow/wallet/system-wallets",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/wallet/system-wallets",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-casaservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3012"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/nflow-bridge/notification",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["nflow-admin"],
+          "cache": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/notification",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-nflowbridge-dev.demo-develop-gcp.svc.demo-dev.cloud.:3024"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/notification",
+      "input_query_strings": ["type", "lastMessageId"],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/notification",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/notification/device/logout",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/notification/device/logout",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/notification/device/register",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/notification/device/register",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/notification/device/signin",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/notification/device/signin",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/proxy/{context-path}",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "propagate_claims": [
+            ["sub", "x-user"],
+            ["email", "x-email"],
+            ["realm_access.role", "x-role"]
+          ]
+        }
+      },
+      "input_headers": [
+        "Content-Type",
+        "x-user",
+        "x-email",
+        "x-role",
+        "X-Nc-Tenant"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/v1/f/{context-path}?userId={JWT.sub}&email={JWT.email}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "extra_config": {
+            "auth/client-credentials": {
+              "client_id": "DEV__nflow_staging_demo_predev",
+              "client_secret": "11VFP1Q1bYANLkJIfkeeK20SJyLxw7Uu",
+              "scopes": "email profile",
+              "token_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/token",
+              "endpoint_params": {
+                "username": ["demo-admin@nuclent.com"],
+                "password": ["Abcd1234!"],
+                "grant_type": ["password"]
+              }
+            }
+          },
+          "host": ["https://demo_predev.nflow.staging.nuclent.com"],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/s3-aws/presigned-url",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["Authorization", "Content-Type", "di"],
+      "input_query_strings": ["type"],
+      "backend": [
+        {
+          "url_pattern": "/s3-aws/presigned-url",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/{accountId}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/{accountId}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/{accountId}/confirm",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/{accountId}/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/{accountId}/init",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/{accountId}/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/{accountId}/withdraw/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/{accountId}/withdraw/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/{accountId}/withdraw/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/{accountId}/withdraw/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/open/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/open/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/saving-account/open/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/saving-account/open/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Content-Type",
+        "Authorization",
+        "x-bc-payload"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/send-crypto-currency/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/send-crypto-currency/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type", "x-bc-payload"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/send-crypto-currency/fee",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/send-crypto-currency/fee",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/send-crypto-currency/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/send-crypto-currency/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/send-crypto-currency/validate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/send-crypto-currency/validate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-bc-payload",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit/account/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["di", "Authorization"],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/account/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit/account/{id}",
+      "method": "PUT",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/account/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PUT",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit/config",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/config",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": [
+        "di",
+        "dt",
+        "dm",
+        "ov",
+        "ct",
+        "lang",
+        "x-forwarded-for",
+        "Authorization"
+      ]
+    },
+    {
+      "endpoint": "/v1/term-deposit/config-v2",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/config-v2",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "dt", "dm", "ov", "ct", "lang", "x-forwarded-for"]
+    },
+    {
+      "endpoint": "/v1/term-deposit/total-balance",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/total-balance",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit/validate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/validate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/term-deposit/withdraw",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-bc-payload",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/term-deposit/withdraw",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/transaction",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["type", "savingsId", "accountId"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transaction",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transaction/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction/{id}",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transaction/account-activities",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["type", "page", "accountId", "perPage"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction/account-activities",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transaction/account-activities/detail",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": ["id"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction/account-activities/detail",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transaction/account-statement",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_query_strings": [
+        "type",
+        "page",
+        "accountId",
+        "perPage",
+        "isStockShareAmount",
+        "stockSymbol"
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transaction/account-statement",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transfer/config-minimum",
+      "input_query_strings": ["symbol", "type"],
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "roles": ["user-demo"],
+          "scopes_matcher": "any"
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/transfer/config-minimum",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transfer/internal",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/transfer/internal",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "x-bc-payload", "di"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/transfer/internal/fee",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["Content-Type", "di"],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/transfer/internal/fee",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/transfer/system/fee",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "transfer/system/fee",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/transfer/system/max_amount",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/transfer/system/max_amount",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/upload-image",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/upload-image",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev/protocol/openid-connect/certs",
+          "issuer": "https://keycloak.common.nuclent.com/auth/realms/DEV__nflow_staging_demo_predev",
+          "disable_jwk_security": false
+        }
+      },
+      "input_headers": ["Content-Type", "Authorization"]
+    },
+    {
+      "endpoint": "/v1/user/config/auto-swap",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/user/config/auto-swap",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/user/config/channel-url",
+      "method": "PATCH",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/user/config/channel-url",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "PATCH",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/user/config/deposit-account",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/user/config/deposit-account",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/user/currency-accounts",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/user/currency-accounts",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/user/mfa/change",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "di",
+        "x-forwarded-for",
+        "Authorization",
+        "Content-Type",
+        "x-bc-payload"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "/user/mfa/change",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/user/mfa/google-authenticator",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/user/mfa/google-authenticator",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "Authorization", "Content-Type"],
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      }
+    },
+    {
+      "endpoint": "/v1/v2/auth/change-device",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "x-bc-payload",
+        "di",
+        "x-forwarded-for",
+        "Content-Type"
+      ],
+      "concurrent_calls": 1,
+      "backend": [
+        {
+          "url_pattern": "v2/auth/change-device",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/v2/auth/validate-email",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [],
+      "backend": [
+        {
+          "url_pattern": "v2/auth/validate-email",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/wallet-validator",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/wallet-validator",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["di", "x-forwarded-for", "Content-Type"]
+    },
+    {
+      "endpoint": "/v1/withdraw/confirm",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "withdraw/confirm",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "x-bc-payload", "di"]
+    },
+    {
+      "endpoint": "/v1/withdraw/init",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "withdraw/init",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v1/withdraw/validate",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "withdraw/validate",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "POST",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Authorization", "Content-Type", "di"]
+    },
+    {
+      "endpoint": "/v2/auth/owner",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "ES256",
+          "jwk_url": "http://demo-be-onboardingservice-dev.demo-develop-gcp.svc.demo-dev.cloud.:3011/auth/openid-connect/certs",
+          "issuer": "demo",
+          "cache": false,
+          "disable_jwk_security": true,
+          "scopes_matcher": "all"
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/v2/auth/owner",
+          "encoding": "no-op",
+          "sd": "static",
+          "method": "GET",
+          "host": [
+            "http://demo-be-engagement-dev.demo-develop-gcp.svc.demo-dev.cloud.:3019"
+          ],
+          "disable_host_sanitize": true
+        }
+      ],
+      "input_headers": ["Content-Type", "Authorization", "di"]
+    }
+  ],
+  "plugin": {
+    "pattern": ".so",
+    "folder": "/opt/krakend.0.0/plugins/"
+  },
+  "extra_config": {
+    "plugin/http-server": {
+      "name": ["static-filesystem"],
+      "static-filesystem": {
+        "prefix": "/media/assets",
+        "path": "/var/www/static"
+      }
+    },
+      "router": {
+          "forwarded_by_client_ip": true,
+          "remote_ip_headers": ["X-Forwarded-For"],
+          "trusted_proxies": ["130.211.0.0/22", "35.191.0.0/16", "34.120.105.108/32"]
+      }
+  }
+}
