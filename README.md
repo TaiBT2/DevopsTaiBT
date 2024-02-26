@@ -574,3 +574,5 @@ sync; echo 1 > /proc/sys/vm/drop_caches
 - step 2: go to security > indetity > system asssigned > turn on
 - step 3: go to keyvaul > IAM > add role assigment > choose permistion >  manage identity > select member
 ** reference: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=portal%2Chttp
+## RPS (request per second)
+- RPS = number CPU*(1/ task duration) (time xử lý 1 request) = (total ram/ ram usage)8(1/task duration)

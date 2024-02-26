@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.nameOverride }}-{{ .Values.env }}
+    tier: {{ .Values.env }}-backend
+  name: {{ .Values.nameOverride }}-{{ .Values.env }}
+  namespace : {{ .Values.namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: {{ .Values.service.nameHttp }}
+    protocol: TCP
+    port: {{ .Values.service.portHttp }}
+    targetPort: {{ .Values.service.targetPortHttp }}
+    {{ if and (eq .Values.service.type "NodePort") .Values.service.type }}
+    nodePort: {{ .Values.service.nodePortHttp }}   
+    {{ end }}
+  selector:
+    app: {{ .Values.nameOverride }}-{{ .Values.env }}
+    tier: {{ .Values.env }}-backend
+  sessionAffinity: None
