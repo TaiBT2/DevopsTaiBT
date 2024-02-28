@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dind
+  namespace: cicd
+  labels:
+    k8slens-edit-resource-version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dind
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: dind
+        version: v1
+    spec:
+      volumes:
+        - name: dind-storage
+          emptyDir: {}
+        - name: data
+          persistentVolumeClaim:
+            claimName: jenkins-agent-pv
+      containers:
+        - name: dind-daemon
+          image: docker:dind
+          ports:
+            - containerPort: 2375
+              protocol: TCP
+          env:
+            - name: DOCKER_TLS_CERTDIR
+          resources: {}
+          volumeMounts:
+            - name: dind-storage
+              mountPath: /var/lib/docker
+            - name: data
+              mountPath: /data
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
