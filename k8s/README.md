@@ -29,7 +29,8 @@ sudo sysctl --system
 - Install CRI-O Runtime On All The Nodes
 ```
 OS="xUbuntu_22.04"
-
+  
+  
 VERSION="1.28"
 
 cat <<EOF | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
@@ -89,4 +90,99 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
 
 kubectl create -f custom-resources.yaml
+```
+## INSTALL MetalLB
+- deploy metallb
+```
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+```
+- config IP for metallb
+```
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.1.50/32
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: default
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - default-pool
+```
+```
+kubectl apply -f config.yaml
+```
+- deploy nginx
+```
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.0/deploy/static/provider/cloud/deploy.yaml
+```
+-  router cấu hình mở port 80/443 và forward traffic đến IP 192.168.1.50 hoặc có thể thêm IP 192.168.1.50 vào DMZ zone.
+## INSTALL METRICS SERVER
+```
+kubectl apply -f https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml
+kubectl top nodes
+```
+## INSTALL NFS SERVER (ubuntu)
+- install nfs server
+```
+sudo apt-get update
+sudo apt install nfs-kernel-server
+```
+- create export directory
+```
+mkdir -p /data
+sudo chown -R nobody:nogroup /data
+sudo chmod -R 777 /data
+```
+- grant client machine access nfs server
+```
+sudo nano /etc/exports
+/data clientIP(rw,sync,no_subtree_check)
+/data 192.168.0.0/24(rw,sync,no_subtree_check)
+```
+- apply the config
+```
+sudo exportfs -a
+sudo systemctl restart nfs-kernel-server
+```
+- check again
+```
+showmount -e 192.168.10.19
+```
+- install nfs-client (Cần phải cài đặt NFS Client trên tất cả các worker node để khi tạo Pod trên node đó có sử dụng NFS Storage Class thì node đó có thể mount được phân vùng NFS đã được share bởi NFS Server.)
+```
+sudo apt update
+sudo apt install nfs-common
+```
+- if status nfs-common 
+```
+○ nfs-common.service
+     Loaded: masked (Reason: Unit nfs-common.service is masked.)
+     Active: inactive (dead)
+
+```
+- => fix it
+```
+rm /lib/systemd/system/nfs-common.service
+systemctl daemon-reload
+sudo systemctl start nfs-common
+sudo systemctl status nfs-common
+```
+- creating mount point and 10.20.23.187
+```
+sudo mount 10.20.23.187:/media/rk-svdg1/DATA/retain /nfs/retain
+sudo mount 10.20.23.187:/media/rk-svdg1/DATA/delete /nfs/delete
+```
+- auto connect nsf-server when start. Edit file 
+```
+sudo nano /etc/fstab
+10.20.23.187:/media/rk-svdg1/DATA/retain    /nfs/retain   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
+10.20.23.187:/media/rk-svdg1/DATA/delete   /nfs/delete   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 ```

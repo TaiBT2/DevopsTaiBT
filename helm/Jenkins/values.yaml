@@ -1,0 +1,2 @@
+# helm upgrade --install jenkins oci://registry-1.docker.io/bitnamicharts/jenkins -n jenkins -f helm/Jenkins/values.yaml --set persistence.storageClass='nfs-client-retain'
+persistence.storageClass='nfs-client-retain'

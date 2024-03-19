@@ -1,0 +1,86 @@
+# trigger:
+#   branches:
+#     include:
+#       - main
+
+# pool:
+#   vmImage: 'ubuntu-latest'
+
+# steps:
+# - task: NodeTool@0
+#   inputs:
+#     versionSpec: '14.x'
+#   displayName: 'Install Node.js'
+
+# - script: |
+#     npm install
+#     npm run build
+#   displayName: 'Build Node.js package'
+
+# - task: CopyFiles@2
+#   inputs:
+#     SourceFolder: '$(Build.SourcesDirectory)'
+#     Contents: '**'
+#     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#   displayName: 'Copy files to artifact staging directory'
+
+# - task: ArchiveFiles@2
+#   inputs:
+#     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+#     includeRootFolder: false
+#     archiveType: 'zip'
+#     archiveFile: '$(Build.ArtifactStagingDirectory)/package.zip'
+#     replaceExistingArchive: true
+#   displayName: 'Archive files'
+
+# - task: AzureRmWebAppDeployment@4
+#   inputs:
+#     ConnectionType: 'AzureRM'
+#     azureSubscription: '<Azure Subscription>'
+#     appType: 'webApp'
+#     WebAppName: '<App Service Name>'
+#     packageForLinux: '$(Build.ArtifactStagingDirectory)/package.zip'
+---
+#Setting up the Azure Pipeline
+- stage: Deploy
+  displayName: 'Deploy to Azure Web App'
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '14.x'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+        npm run build
+      displayName: 'Build Node.js package'
+
+    - task: CopyFiles@2
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      displayName: 'Copy files to artifact staging directory'
+
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/package.zip'
+        replaceExistingArchive: true
+      displayName: 'Archive files'
+
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: '<Azure Subscription>'
+        appType: 'webApp'
+        WebAppName: '<App Service Name>'
+        packageForLinux: '$(Build.ArtifactStagingDirectory)/package.zip'
+      displayName: 'Deploy to Azure Web App'

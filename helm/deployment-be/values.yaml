@@ -129,7 +129,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-send-timeout: '240'
     nginx.ingress.kubernetes.io/server_names_hash_bucket_size: '128'
     nginx.ingress.kubernetes.io/backend-protocol: HTTP
-    # cert-manager.io/cluster-issuer: letsencrypt-production
+    cert-manager.io/cluster-issuer: letsencrypt-prod
   hosts:
     - host: s23daimgmlm-uat-api-payment.synodus.vn
       paths:
