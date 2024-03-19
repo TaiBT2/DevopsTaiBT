@@ -30,7 +30,7 @@ sudo sysctl --system
 ```
 OS="xUbuntu_22.04"
   
-  
+
 VERSION="1.28"
 
 cat <<EOF | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
@@ -90,6 +90,11 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1
 curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
 
 kubectl create -f custom-resources.yaml
+```
+- if error
+```
+        - 'systemctl status kubelet'
+        - 'journalctl -xeu kubelet'
 ```
 ## INSTALL MetalLB
 - deploy metallb
@@ -186,3 +191,4 @@ sudo nano /etc/fstab
 10.20.23.187:/media/rk-svdg1/DATA/retain    /nfs/retain   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 10.20.23.187:/media/rk-svdg1/DATA/delete   /nfs/delete   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 ```
+## DEPLOY NEXUS
