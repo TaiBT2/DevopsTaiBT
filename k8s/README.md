@@ -6,6 +6,12 @@ Note dùng để tóm tắt kinh nghiệm với k8s
 * Command, cách dựng k8s, tip vs k8s
 ## INSTALL K8S
 - Turn of swap
+```
+sudo swapoff -a
+sudo nano /etc/fstab
+sudo reboot
+sudo swapon --show
+```
 - enable iptable bridge
 ```
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -69,9 +75,9 @@ sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 ```
 ```
-local_ip=10.20.23.197
+local_ip=10.20.23.192
 cat > /etc/default/kubelet << EOF
-KUBELET_EXTRA_ARGS=--node-ip=$local_ip
+KUBELET_EXTRA_ARGS=--node-ip=10.20.23.192
 EOF
 ```
 - Initialize Kubeadm On Master Node To Setup Control Plane
@@ -159,7 +165,7 @@ sudo systemctl restart nfs-kernel-server
 ```
 - check again
 ```
-showmount -e 192.168.10.19
+showmount -e 10.20.23.197
 ```
 - install nfs-client (Cần phải cài đặt NFS Client trên tất cả các worker node để khi tạo Pod trên node đó có sử dụng NFS Storage Class thì node đó có thể mount được phân vùng NFS đã được share bởi NFS Server.)
 ```
@@ -190,5 +196,40 @@ sudo mount 10.20.23.187:/media/rk-svdg1/DATA/delete /nfs/delete
 sudo nano /etc/fstab
 10.20.23.187:/media/rk-svdg1/DATA/retain    /nfs/retain   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
 10.20.23.187:/media/rk-svdg1/DATA/delete   /nfs/delete   nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0
+```
+- Download helm chart nfs-client-provisioner về để cài offline:
+```
+helm repo add stable https://charts.helm.sh/stable
+helm search repo nfs-client-provisioner
+helm pull stable/nfs-client-provisioner --version 1.2.11
+tar -xzf nfs-client-provisioner-1.2.11.tgz
+cp nfs-client-provisioner/values.yaml values-nfs-delete.yaml
+cp nfs-client-provisioner/values.yaml values-nfs-retain.yaml
+```
+- fill  values-nfs-delete.yaml 
+```
+replicaCount: 3
+server: 192.168.10.19
+path: /data2/delete
+provisionerName: viettq-nfs-storage-delete-provisioner
+name: viettq-nfs-delete
+reclaimPolicy: Delete
+archiveOnDelete: false
+```
+- fill values-nfs-retain.yaml
+```
+replicaCount: 3
+server: 192.168.10.19
+path: /data2/retain
+provisionerName: viettq-nfs-storage-retain-provisioner
+name: viettq-nfs-retain
+reclaimPolicy: Retain
+archiveOnDelete: true
+```
+## INSTALL HELM
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+sudo chmod 700 get_helm.sh
+./get_helm.sh
 ```
 ## DEPLOY NEXUS
