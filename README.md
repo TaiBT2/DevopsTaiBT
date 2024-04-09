@@ -576,3 +576,67 @@ sync; echo 1 > /proc/sys/vm/drop_caches
 ** reference: https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=portal%2Chttp
 ## RPS (request per second)
 - RPS = number CPU*(1/ task duration) (time xử lý 1 request) = (total ram/ ram usage)8(1/task duration)
+## Settup Mysql Server
+- install reference https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-22-04
+```
+sudo apt update
+sudo apt install mysql-server
+sudo systemctl start mysql.service
+```
+```
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+exit
+sudo mysql_secure_installation
+ALTER USER 'root'@'localhost' IDENTIFIED WITH auth_socket;
+```
+- Create user to login
+```
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' WITH GRANT OPTION;
+
+CREATE USER 'username'@'%' IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'%' WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+
+```
+
+
+## Ingress Rewrite
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: observability-ingress
+  namespace: observability
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: $2
+spec:
+  tls:
+    - hosts:
+        - observability.vietnamfmc.site
+      secretName: observability.vietnamfmc.site
+  rules:
+    - host: observability.vietnamfmc.site
+      http:
+        paths:
+          - path: /kibana(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana-kibana
+                port:
+                  number: 5601
+          - path: /grafana(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-grafana
+                port:
+                  number: 3000                  
+
+```

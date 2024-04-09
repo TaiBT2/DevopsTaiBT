@@ -1,4 +1,4 @@
-helm install argocd oci://registry-1.docker.io/bitnamicharts/argo-cd -n devops
+helm install argocd oci://registry-1.docker.io/bitnamicharts/argo-cd -n devops -f values.yaml
 helm repo add hashicorp https://helm.releases.hashicorp.com -n devops
 helm install vault hashicorp/vault -n devops
 helm -n devops upgrade vault-devops hashicorp/vault \
