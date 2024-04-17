@@ -640,3 +640,25 @@ spec:
                   number: 3000                  
 
 ```
+## MYSQL
+- command backup restore 
+```
+backup-command: mysqldump -h 47.236.107.98 -u root --port 3306  -p singhai_new > singhai_new_bk.sql
+backup-command: mysqldump -h 10.20.22.168 -u root --port 3306  -p smp_testing > smp_testing_bk.sql
+backup-command: mysqldump -h 66.42.49.212 -u root --port 3306  -p zhy > zhy_bk.sql
+backup-cmd-all-db: mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
+import-cmd-all-db: mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < /some/path/on/your/host/all-databases.sql
+CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'password';
+```
+- fix bug  Access denied for user 'root'@'localhost' (using password: NO)
+```
+/etc/my.cnf
+/etc/mysql/my.cnf
+edit file
+[mysqld]
+skip-grant-tables
+restart server
+mysql -u root -p
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';
+```
