@@ -699,5 +699,6 @@ done
 - lsblk check disk device
 - sudo fdisk -l detail all device
 - sudo fdisk /dev/sda (press enter) create partition disk
+- sudo mkfs.exfat /dev/sda1 create volume sda1
 - mount /dev/sda1 /mnt/backup mount volume
 ```
