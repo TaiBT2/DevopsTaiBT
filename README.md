@@ -662,3 +662,42 @@ mysql -u root -p
 FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';
 ```
+## CREATE BACKUP MYSQL DAILY
+- create backup.sh
+```
+#!/bin/bash
+
+# MySQL credentials
+MYSQL_USER="root"
+MYSQL_PASSWORD="Rikkei@2024"
+
+# Backup directory
+BACKUP_DIR="/home/svdg1/data"
+
+# MySQL dump command
+MYSQLDUMP="/usr/bin/mysqldump"
+
+# Date format for backup file
+DATE_FORMAT=$(date +"%Y%m%d%H%M%S")
+
+# Loop through each database and dump it
+for DB in $(mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e 'show databases' -s --skip-column-names); do
+    if [[ "$DB" != "information_schema" && "$DB" != "performance_schema" && "$DB" != "mysql" && "$DB" != "sys" ]]; then
+        $MYSQLDUMP -u$MYSQL_USER -p$MYSQL_PASSWORD $DB > $BACKUP_DIR/$DB-$DATE_FORMAT.sql
+    fi
+done
+```
+- sudo chmod +x backup.sh
+- edit crontab -e
+```
+0 0 * * * /path/backup.sh
+```
+## CREATE DISK PARTITION AND VOLUME
+- common cmd 
+```
+- df -h check volume
+- lsblk check disk device
+- sudo fdisk -l detail all device
+- sudo fdisk /dev/sda (press enter) create partition disk
+- mount /dev/sda1 /mnt/backup mount volume
+```

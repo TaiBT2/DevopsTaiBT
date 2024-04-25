@@ -282,4 +282,5 @@ EOF
 ## Redis Replicas
 ```
 helm upgrade  --install redis oci://registry-1.docker.io/bitnamicharts/redis -n devops --set global.storageClass=nfs-csi-retain
+helm upgrade  --install redis oci://registry-1.docker.io/bitnamicharts/redis-cluster -n devops --set global.storageClass=nfs-csi-retain
 ```
