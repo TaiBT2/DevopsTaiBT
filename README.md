@@ -702,3 +702,88 @@ done
 - sudo mkfs.exfat /dev/sda1 create volume sda1
 - mount /dev/sda1 /mnt/backup mount volume
 ```
+## Nexus Setting
+- Stafulset
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nexus
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus3
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nexus3
+    spec:
+      containers:
+        - name: nexus3
+          image: sonatype/nexus3:latest
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+            - containerPort: 8082
+              protocol: TCP
+            - containerPort: 8083
+              protocol: TCP              
+          resources: {}
+          volumeMounts:
+            - name: nexus-data2
+              mountPath: /nexus-data
+          imagePullPolicy: Always
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: nexus-data2
+        creationTimestamp: null
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: nfs-csi-retain
+        volumeMode: Filesystem
+
+```
+- Service resource
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus3
+  namespace: jenkins
+spec:
+  ports:
+    - name: host
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+    - name: proxy
+      protocol: TCP
+      port: 8082
+      targetPort: 8082
+  selector:
+    app: nexus3
+  type: ClusterIP
+```
+- change password
+- enable anonymous
+-  config nexus create hub docker (type hosted)
+```
+Click Security > Realms
+Add the 'Docker Bearer Token Realm'
+Click 'Save'
+
+create  new repo type: hosted
+HTTP: 8082
+
+Enable Docker V1 API
+
+```
