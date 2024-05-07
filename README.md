@@ -787,3 +787,10 @@ HTTP: 8082
 Enable Docker V1 API
 
 ```
+- more infor: 
+```
+Group — grouping hosted Docker together for easy access granting
+Hosted — We will use this. Normal private repos
+Proxy — not yet this, this is for forward to download from e.g. Docker hub
+link: https://medium.com/codemonday/setup-nexus-oss-on-docker-as-docker-registry-for-learning-748c23f0b951
+```

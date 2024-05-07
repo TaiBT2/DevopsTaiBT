@@ -15,3 +15,8 @@
 - check free disk space available: df -h
 - list all block devide: lsblk
 - extend size: growpart /dev/xvda 1 ( phụ thuộc type file system)
+## Athena
+- athena là dịch vụ query tương tác của aws giúp mình dễ dàng phân tích data trực tiếp trong S3 và sử dụng SQL. chỉ cần chỉ chỉ định bucket s3 và sử dụng standard sql để run ad-hoc queries và sẽ có kết quả trong vài giây
+## Kinesis Data Streams
+- là dịch vụ aws để thu thập và xử lý luồng bản ghi lớn trong thời gian thực
+- MFA 

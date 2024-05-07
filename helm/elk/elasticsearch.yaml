@@ -43,9 +43,10 @@ resources:
 
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
+  storageClassName: "nfs-csi-retain"
   resources:
     requests:
-      storage: 50Gi
+      storage: 20Gi
 antiAffinityTopologyKey: "kubernetes.io/hostname"
 antiAffinity: "soft"
 # nodeSelector:
