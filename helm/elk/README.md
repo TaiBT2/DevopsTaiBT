@@ -243,3 +243,16 @@ helm upgrade --install elasticsearch oci://registry-1.docker.io/bitnamicharts/el
 helm upgrade  --install kibana oci://registry-1.docker.io/bitnamicharts/kibana  -n devops -f kibana-values-sd.yaml
 ```
 
+## Schedule crontab
+```
+# Every fifteen minutes (perhaps at :07, :22, :37, :52):
+H/15 * * * *
+# Every ten minutes in the first half of every hour (three times, perhaps at :04, :14, :24):
+H(0-29)/10 * * * *
+# Once every two hours at 45 minutes past the hour starting at 9:45 AM and finishing at 3:45 PM every weekday:
+45 9-16/2 * * 1-5
+# Once in every two hour slot between 8 AM and 4 PM every weekday (perhaps at 9:38 AM, 11:38 AM, 1:38 PM, 3:38 PM):
+H H(8-15)/2 * * 1-5
+# Once a day on the 1st and 15th of every month except December:
+H H 1,15 1-11 *
+```
