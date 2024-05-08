@@ -48,7 +48,7 @@ kibanaConfig:
 #       nestedkey: value
   kibana.yml: |
     "server.maxPayload": 1048576
-    "server.publicBaseUrl": "https://observability-dev.cleocircle.com/"
+    "server.publicBaseUrl": "https://kibanadg1.rikkei.org/"
 
 # If Pod Security Policy in use it may be required to specify security context as well as service account
 
