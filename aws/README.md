@@ -20,3 +20,7 @@
 ## Kinesis Data Streams
 - là dịch vụ aws để thu thập và xử lý luồng bản ghi lớn trong thời gian thực
 - MFA 
+## Global Accelerator
+- cải thiện ộ sẳn sàng, bảo mật, hiệu năng của ứng dụng ra internet. giúp xem là khi user call api sẽ gọi đến server nào. dựa vào độ trể. server nào có độ trể thấp hơn sẽ call đến đó
+- khi tạo 1 GA thì sẽ giúp chúng ta điều hướng traffic đến nhiều server trên nhiều region, 
+- GA sẽ cung cấp 1 DNS và thêm các static IP theo số region
