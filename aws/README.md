@@ -41,3 +41,10 @@
 ## NETWORK FIREWALL
 ## Amazon QuickSight
 -  QuickSight is used to created dashboard from S3, RDS, Redshift, Aurora, Athena, OpenSearch, Timestream
+## AWS Config
+- Aws config là service giúp chúng ta có thể kiểm tra đánh giá aws resources.
+- Ví dụ aws config tạo rule là chỉ cho phép các ami nhất định thôi, nhưng nếu có ec2 nào ko dùng các ami quy định đó sẽ terminate đi.
+## AWS system manager
+- Quản lý các ec2, truy xuất ec2 bảo mật, chỉ cần ec2 có role SSM và có SSM agent.
+##  Amazon Kinesis
+- 
