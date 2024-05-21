@@ -58,3 +58,43 @@ rs.reconfig(cfg)
 --
 sudo iptables -I INPUT -i eth0 -p tcp --dport 3306 -m comment --comment "# Anaconda Repo #" -j ACCEPT
 ```
+## Centos
+### Install certbot
+- install python 3.8
+```
+yum install python3.8
+sudo alternatives --set python3 /usr/bin/python3.8
+```
+- Install snapd
+```
+sudo yum install epel-release
+sudo yum install snapd
+```
+- create symlink for snap
+```
+sudo ln -s /var/lib/snapd/snap /snap
+```
+- Start and Enable snapd:
+```
+sudo systemctl enable --now snapd.socket
+sudo systemctl start snapd.seeded.service
+
+```
+- Wait for snapd to Initialize:
+```
+sudo systemctl status snapd.seeded.service
+```
+- install certbot
+```
+sudo snap install core
+sudo snap refresh core
+sudo snap install --classic certbot
+```
+- symlink to acess
+```
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+```
+- run certbot
+```
+sudo certbot --nginx
+```
