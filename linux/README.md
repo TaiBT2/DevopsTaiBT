@@ -11,8 +11,3 @@ rsync -aP /mnt/HDD/nfs/s24dapvpwebpt-test-data-postgresql-0-pvc-c00f4d3e-bea1-4d
 ```
 "/usr/bin/supervisord", "-c", "/etc/supervisord.conf"
 ```
-- check size folder , file
-```
-du -sh /path_folder
-du -sh /file_name
-```
