@@ -98,3 +98,11 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 ```
 sudo certbot --nginx
 ```
+## Find age's file and remove
+```
+find /mnt/backup -maxdepth 1 -type f  -mtime +2 -name "*.sql"  -exec rm  {} \;
+```
+- find age of file
+```
+$((($(date +%s) - $(date +%s -r agent.jar ))/86400)) > 7));then echo hello; fi
+```
