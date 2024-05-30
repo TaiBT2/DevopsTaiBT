@@ -1,3 +1,7 @@
+## SUMARY
+1. **Print Console**
+2. **Python variable**
+3. **Python Input function**
 ## PRINT CONSOLE
 In Python, việc in ra console rất đơn giản và chủ yếu sử dụng hàm `print()`. Dưới đây là một số ví dụ cơ bản và nâng cao về cách sử dụng hàm `print()`.
 
