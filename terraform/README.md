@@ -1165,3 +1165,180 @@ output "instance_public_ip" {
 ```
 
 Trong ví dụ này, Terraform sẽ truy vấn thông tin về instance
+## Terraform for each
+Trong Terraform, `for_each` là một công cụ mạnh mẽ cho phép bạn tạo và quản lý nhiều tài nguyên dựa trên các đối tượng trong một danh sách hoặc bản đồ. Nó cung cấp sự linh hoạt và khả năng kiểm soát chi tiết hơn so với `count`.
+
+### 1. Cách sử dụng `for_each`
+
+Khi bạn sử dụng `for_each`, bạn cung cấp một danh sách hoặc bản đồ các đối tượng và Terraform sẽ tạo một bản sao của tài nguyên cho mỗi mục trong danh sách hoặc bản đồ đó.
+
+### 2. Cú pháp cơ bản
+
+Cú pháp cơ bản của `for_each` trông giống như sau:
+
+```hcl
+resource "resource_type" "resource_name" {
+  for_each = <list_or_map>
+
+  # Các thuộc tính của tài nguyên
+  attribute = each.key  # Hoặc each.value
+}
+```
+
+### 3. Ví dụ về `for_each`
+
+#### a. Tạo nhiều tài nguyên từ một danh sách
+
+Giả sử bạn muốn tạo nhiều phiên bản EC2 trên AWS, mỗi phiên bản sẽ được gán một thẻ khác nhau từ danh sách.
+
+```hcl
+variable "instance_names" {
+  type    = list(string)
+  default = ["instance1", "instance2", "instance3"]
+}
+
+resource "aws_instance" "example" {
+  for_each = toset(var.instance_names)
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = each.key
+  }
+}
+```
+
+Trong ví dụ này, Terraform sẽ tạo ba phiên bản EC2, mỗi phiên bản có một thẻ tên khác nhau từ danh sách `instance_names`.
+
+#### b. Sử dụng bản đồ với `for_each`
+
+Giả sử bạn muốn tạo các nhóm bảo mật (security group) với các tên và mô tả khác nhau dựa trên một bản đồ.
+
+```hcl
+variable "security_groups" {
+  type = map(string)
+  default = {
+    "web" = "Web Server SG"
+    "db"  = "Database Server SG"
+  }
+}
+
+resource "aws_security_group" "example" {
+  for_each = var.security_groups
+  
+  name        = each.key
+  description = each.value
+
+  vpc_id = "vpc-123456"
+}
+```
+
+Trong ví dụ này, Terraform sẽ tạo hai nhóm bảo mật, mỗi nhóm có tên và mô tả tương ứng từ bản đồ `security_groups`.
+
+### 4. Truy cập vào khóa và giá trị với `each`
+
+Trong `for_each`, `each` là một đối tượng đặc biệt chứa các cặp khóa-giá trị từ danh sách hoặc bản đồ.
+
+- `each.key`: Khóa hiện tại từ danh sách hoặc bản đồ.
+- `each.value`: Giá trị hiện tại từ danh sách hoặc bản đồ.
+
+### 5. Biến đổi danh sách hoặc bản đồ cho `for_each`
+
+Đôi khi bạn cần biến đổi danh sách hoặc bản đồ trước khi sử dụng với `for_each`. Bạn có thể sử dụng các hàm của Terraform như `toset`, `tolist`, hoặc `tomap` để thực hiện điều này.
+
+#### a. Biến đổi danh sách thành tập hợp với `toset`
+
+```hcl
+variable "instance_names" {
+  type    = list(string)
+  default = ["instance1", "instance2", "instance3"]
+}
+
+resource "aws_instance" "example" {
+  for_each = toset(var.instance_names)
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = each.key
+  }
+}
+```
+
+#### b. Sử dụng bản đồ với `for_each`
+
+```hcl
+variable "security_groups" {
+  type = map(string)
+  default = {
+    "web" = "Web Server SG"
+    "db"  = "Database Server SG"
+  }
+}
+
+resource "aws_security_group" "example" {
+  for_each = var.security_groups
+  
+  name        = each.key
+  description = each.value
+
+  vpc_id = "vpc-123456"
+}
+```
+
+### 6. Ví dụ Hoàn chỉnh
+
+#### a. Cấu hình Terraform (`main.tf` và `variables.tf`)
+
+`variables.tf`
+```hcl
+variable "instance_names" {
+  type    = list(string)
+  default = ["instance1", "instance2", "instance3"]
+}
+
+variable "security_groups" {
+  type = map(string)
+  default = {
+    "web" = "Web Server SG"
+    "db"  = "Database Server SG"
+  }
+}
+```
+
+`main.tf`
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  for_each = toset(var.instance_names)
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = each.key
+  }
+}
+
+resource "aws_security_group" "example" {
+  for_each = var.security_groups
+  
+  name        = each.key
+  description = each.value
+
+  vpc_id = "vpc-123456"
+}
+```
+
+### Tổng kết
+
+- **`for_each`**: Sử dụng để tạo và quản lý nhiều tài nguyên dựa trên một danh sách hoặc bản đồ.
+- **`each.key` và `each.value`**: Truy cập vào khóa và giá trị hiện tại trong danh sách hoặc bản đồ.
+- **Biến đổi danh sách hoặc bản đồ**: Sử dụng các hàm như `toset`, `tolist`, hoặc `tomap` để biến đổi dữ liệu trước khi sử dụng với `for_each`.
+
+Sử dụng `for_each` giúp cấu hình Terraform của bạn trở nên linh hoạt và dễ quản lý hơn. Nếu bạn có thêm câu hỏi hoặc cần trợ giúp cụ thể, hãy cho tôi biết!
