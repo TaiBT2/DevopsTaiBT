@@ -527,3 +527,119 @@ instance_tags = {
 ### Tổng kết
 
 Biến trong Terraform giúp bạn làm cho cấu hình của mình linh hoạt và dễ tái sử dụng hơn. Bằng cách sử dụng biến, bạn có thể dễ dàng thay đổi cấu hình mà không cần thay đổi mã nguồn. Các biến có thể được gán giá trị theo nhiều cách khác nhau, bao gồm tệp `terraform.tfvars`, dòng lệnh, biến môi trường và tệp `*.auto.tfvars`. Việc hiểu và sử dụng biến đúng cách sẽ giúp bạn quản lý cơ sở hạ tầng hiệu quả hơn với Terraform. Nếu bạn có bất kỳ câu hỏi nào hoặc cần thêm ví dụ cụ thể, hãy cho tôi biết!
+## Terraform Variable Definitions File (TFVARS)
+Trong Terraform, tệp định nghĩa biến (Variable Definitions File), thường được gọi là tệp `.tfvars`, được sử dụng để cung cấp giá trị cho các biến mà bạn đã khai báo trong cấu hình Terraform của mình. Sử dụng tệp `.tfvars` giúp bạn tách biệt giá trị biến ra khỏi mã nguồn chính của cấu hình, làm cho mã của bạn dễ quản lý và bảo trì hơn.
+
+### 1. Tạo Tệp `.tfvars`
+
+Bạn có thể tạo một tệp `.tfvars` với tên tùy ý, nhưng theo thông lệ, tệp này thường được đặt tên là `terraform.tfvars` hoặc có phần mở rộng `.auto.tfvars`.
+
+#### Ví dụ: `terraform.tfvars`
+```hcl
+region        = "us-west-2"
+instance_type = "t3.medium"
+instance_tags = {
+  Name        = "example-instance"
+  Environment = "production"
+}
+```
+
+### 2. Sử dụng Tệp `.tfvars`
+
+Khi bạn chạy lệnh `terraform plan` hoặc `terraform apply`, Terraform sẽ tự động tìm kiếm và tải tệp `terraform.tfvars` trong thư mục làm việc hiện tại. Nếu bạn sử dụng tệp có tên khác, bạn cần chỉ định rõ ràng tệp đó bằng cờ `-var-file`.
+
+#### Ví dụ:
+```sh
+terraform plan -var-file="custom.tfvars"
+terraform apply -var-file="custom.tfvars"
+```
+
+### 3. Cách Tổ chức và Quản lý Các Biến với Tệp `.tfvars`
+
+#### a. Sử dụng `terraform.tfvars`
+Nếu bạn sử dụng tệp `terraform.tfvars`, Terraform sẽ tự động tải tệp này mà không cần chỉ định bằng cờ `-var-file`.
+
+```sh
+terraform plan
+terraform apply
+```
+
+#### b. Sử dụng Tệp `.auto.tfvars`
+Tệp `.auto.tfvars` cũng được tự động tải bởi Terraform. Điều này hữu ích khi bạn muốn chia giá trị biến ra nhiều tệp nhỏ.
+
+Ví dụ, bạn có thể có các tệp như `variables.auto.tfvars`, `production.auto.tfvars`.
+
+```sh
+terraform plan
+terraform apply
+```
+
+#### c. Quản lý Nhiều Môi Trường
+Bạn có thể tạo các tệp `.tfvars` khác nhau cho các môi trường khác nhau, ví dụ: `dev.tfvars`, `staging.tfvars`, `prod.tfvars`.
+
+```sh
+terraform plan -var-file="dev.tfvars"
+terraform apply -var-file="prod.tfvars"
+```
+
+### 4. Ví dụ Hoàn chỉnh
+
+#### a. Cấu hình Terraform (`main.tf` và `variables.tf`)
+
+`variables.tf`
+```hcl
+variable "region" {
+  description = "The AWS region to deploy resources"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "The type of instance to use"
+  type        = string
+}
+
+variable "instance_tags" {
+  description = "Tags to apply to the instance"
+  type = map(string)
+}
+```
+
+`main.tf`
+```hcl
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type
+
+  tags = var.instance_tags
+}
+```
+
+#### b. Tệp `terraform.tfvars`
+
+`terraform.tfvars`
+```hcl
+region        = "us-west-2"
+instance_type = "t3.medium"
+instance_tags = {
+  Name        = "example-instance"
+  Environment = "production"
+}
+```
+
+### 5. Sử dụng Tệp `.tfvars` với Terraform
+
+Khi bạn đã tạo xong tệp `terraform.tfvars`, bạn có thể chạy các lệnh Terraform như bình thường:
+
+```sh
+terraform init
+terraform plan
+terraform apply
+```
+
+### Tổng kết
+
+Tệp `.tfvars` trong Terraform giúp bạn quản lý và gán giá trị cho các biến một cách linh hoạt và tiện lợi. Việc sử dụng tệp `.tfvars` giúp cấu hình của bạn sạch sẽ hơn và dễ quản lý hơn, đặc biệt khi bạn có nhiều môi trường hoặc cần thay đổi giá trị biến thường xuyên. Hãy sử dụng các tệp này để tách biệt giá trị biến khỏi mã nguồn chính của cấu hình Terraform của bạn. Nếu bạn có thêm câu hỏi hoặc cần trợ giúp cụ thể, hãy cho tôi biết!
