@@ -319,3 +319,211 @@ provider "aws" {
 ### Tổng kết
 
 Tệp trạng thái là thành phần cốt lõi trong Terraform, giúp quản lý và theo dõi trạng thái cơ sở hạ tầng. Việc sử dụng backend từ xa cho tệp trạng thái giúp bạn làm việc hiệu quả hơn trong môi trường nhóm và bảo mật tốt hơn. Hãy đảm bảo mã hóa và kiểm soát truy cập tệp trạng thái để bảo vệ thông tin nhạy cảm của bạn. Nếu bạn có bất kỳ câu hỏi cụ thể nào hoặc cần thêm ví dụ, hãy cho tôi biết!
+## Terraform Varriable
+Trong Terraform, biến (variable) là một thành phần quan trọng giúp bạn làm cho cấu hình của mình linh hoạt và có thể tái sử dụng. Biến cho phép bạn truyền các giá trị khác nhau vào cấu hình Terraform mà không cần thay đổi mã nguồn của cấu hình.
+
+### 1. Khai báo Biến
+
+Để khai báo một biến trong Terraform, bạn sử dụng khối `variable`. Khối này có thể bao gồm các thuộc tính như `description`, `type`, `default`, và `validation`.
+
+Ví dụ về khai báo biến:
+
+```hcl
+variable "instance_type" {
+  description = "The type of instance to use"
+  type        = string
+  default     = "t2.micro"
+}
+```
+
+### 2. Sử dụng Biến trong Cấu hình
+
+Sau khi khai báo, bạn có thể sử dụng biến bằng cách tham chiếu đến nó với cú pháp `var.<variable_name>`.
+
+Ví dụ:
+
+```hcl
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+### 3. Gán Giá trị cho Biến
+
+Có nhiều cách để gán giá trị cho biến trong Terraform:
+
+#### a. Sử dụng Tệp `terraform.tfvars`
+
+Tạo một tệp có tên `terraform.tfvars` và định nghĩa các biến bên trong:
+
+```hcl
+instance_type = "t2.large"
+```
+
+#### b. Sử dụng Dòng lệnh
+
+Bạn có thể truyền các giá trị biến trực tiếp từ dòng lệnh khi chạy lệnh `terraform plan` hoặc `terraform apply`:
+
+```sh
+terraform apply -var="instance_type=t2.large"
+```
+
+#### c. Sử dụng Biến Môi trường
+
+Bạn cũng có thể sử dụng biến môi trường để gán giá trị cho biến Terraform. Biến môi trường phải có tên theo cú pháp `TF_VAR_<variable_name>`:
+
+```sh
+export TF_VAR_instance_type="t2.large"
+terraform apply
+```
+
+#### d. Sử dụng Tệp `*.auto.tfvars`
+
+Tạo một tệp có đuôi `.auto.tfvars` và Terraform sẽ tự động tải tệp này. Ví dụ: `variables.auto.tfvars`.
+
+```hcl
+instance_type = "t2.large"
+```
+
+### 4. Các Loại Biến
+
+Terraform hỗ trợ nhiều loại biến khác nhau như `string`, `number`, `bool`, `list`, `map`, `set`, `object`, `tuple`.
+
+#### a. Biến chuỗi (String)
+
+```hcl
+variable "instance_type" {
+  type = string
+}
+```
+
+#### b. Biến số (Number)
+
+```hcl
+variable "instance_count" {
+  type = number
+  default = 1
+}
+```
+
+#### c. Biến boolean (Bool)
+
+```hcl
+variable "enable_monitoring" {
+  type    = bool
+  default = true
+}
+```
+
+#### d. Biến danh sách (List)
+
+```hcl
+variable "availability_zones" {
+  type = list(string)
+  default = ["us-west-1a", "us-west-1b"]
+}
+```
+
+#### e. Biến bản đồ (Map)
+
+```hcl
+variable "instance_tags" {
+  type = map(string)
+  default = {
+    Name = "example-instance"
+    Environment = "development"
+  }
+}
+```
+
+#### f. Biến đối tượng (Object)
+
+```hcl
+variable "instance_config" {
+  type = object({
+    instance_type = string
+    ami           = string
+    tags          = map(string)
+  })
+  default = {
+    instance_type = "t2.micro"
+    ami           = "ami-0c55b159cbfafe1f0"
+    tags          = {
+      Name = "example-instance"
+    }
+  }
+}
+```
+
+#### g. Biến tập hợp (Set)
+
+```hcl
+variable "security_groups" {
+  type = set(string)
+  default = ["sg-12345678", "sg-87654321"]
+}
+```
+
+### 5. Ví dụ Hoàn chỉnh
+
+Dưới đây là một ví dụ hoàn chỉnh về cách sử dụng biến trong một cấu hình Terraform:
+
+#### `variables.tf`
+
+```hcl
+variable "region" {
+  description = "The AWS region to deploy resources"
+  type        = string
+  default     = "us-west-2"
+}
+
+variable "instance_type" {
+  description = "The type of instance to use"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "instance_tags" {
+  description = "Tags to apply to the instance"
+  type = map(string)
+  default = {
+    Name = "example-instance"
+    Environment = "development"
+  }
+}
+```
+
+#### `main.tf`
+
+```hcl
+provider "aws" {
+  region = var.region
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type
+
+  tags = var.instance_tags
+}
+```
+
+#### `terraform.tfvars`
+
+```hcl
+region        = "us-west-2"
+instance_type = "t3.medium"
+instance_tags = {
+  Name        = "example-instance"
+  Environment = "production"
+}
+```
+
+### Tổng kết
+
+Biến trong Terraform giúp bạn làm cho cấu hình của mình linh hoạt và dễ tái sử dụng hơn. Bằng cách sử dụng biến, bạn có thể dễ dàng thay đổi cấu hình mà không cần thay đổi mã nguồn. Các biến có thể được gán giá trị theo nhiều cách khác nhau, bao gồm tệp `terraform.tfvars`, dòng lệnh, biến môi trường và tệp `*.auto.tfvars`. Việc hiểu và sử dụng biến đúng cách sẽ giúp bạn quản lý cơ sở hạ tầng hiệu quả hơn với Terraform. Nếu bạn có bất kỳ câu hỏi nào hoặc cần thêm ví dụ cụ thể, hãy cho tôi biết!
