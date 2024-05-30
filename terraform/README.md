@@ -643,3 +643,293 @@ terraform apply
 ### Tổng kết
 
 Tệp `.tfvars` trong Terraform giúp bạn quản lý và gán giá trị cho các biến một cách linh hoạt và tiện lợi. Việc sử dụng tệp `.tfvars` giúp cấu hình của bạn sạch sẽ hơn và dễ quản lý hơn, đặc biệt khi bạn có nhiều môi trường hoặc cần thay đổi giá trị biến thường xuyên. Hãy sử dụng các tệp này để tách biệt giá trị biến khỏi mã nguồn chính của cấu hình Terraform của bạn. Nếu bạn có thêm câu hỏi hoặc cần trợ giúp cụ thể, hãy cho tôi biết!
+## Terraform  Count and Count Index
+Trong Terraform, `count` và `count.index` là các tính năng mạnh mẽ giúp bạn tạo và quản lý nhiều bản sao của một tài nguyên mà không cần sao chép mã nguồn. Chúng giúp giảm thiểu lỗi và làm cho cấu hình của bạn dễ quản lý hơn.
+
+### 1. Sử dụng `count` trong Terraform
+
+Biến `count` cho phép bạn chỉ định số lượng bản sao của một tài nguyên mà Terraform sẽ tạo. Đây là một thuộc tính của tài nguyên (resource), module, hoặc dữ liệu (data source).
+
+#### Ví dụ Cơ Bản
+
+Giả sử bạn muốn tạo nhiều phiên bản EC2 giống nhau trên AWS.
+
+```hcl
+resource "aws_instance" "example" {
+  count         = 3
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-instance-${count.index}"
+  }
+}
+```
+
+Trong ví dụ này, Terraform sẽ tạo ba phiên bản EC2, và mỗi phiên bản sẽ có tên riêng biệt dựa trên `count.index`.
+
+### 2. Sử dụng `count.index`
+
+`count.index` là một chỉ số (index) bắt đầu từ 0 và tăng lên theo số lượng tài nguyên được tạo ra bằng cách sử dụng `count`. Nó rất hữu ích khi bạn cần gán các giá trị duy nhất cho từng bản sao của tài nguyên.
+
+#### Ví dụ Chi Tiết
+
+Giả sử bạn muốn tạo các phiên bản EC2 trong nhiều vùng sẵn sàng (availability zones) khác nhau.
+
+```hcl
+variable "availability_zones" {
+  type = list(string)
+  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+
+resource "aws_instance" "example" {
+  count = length(var.availability_zones)
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  availability_zone = var.availability_zones[count.index]
+
+  tags = {
+    Name = "example-instance-${count.index}"
+  }
+}
+```
+
+Trong ví dụ này, số lượng phiên bản EC2 được tạo sẽ dựa trên số lượng vùng sẵn sàng trong biến `availability_zones`, và mỗi phiên bản sẽ được tạo trong một vùng sẵn sàng khác nhau.
+
+### 3. Điều Kiện với `count`
+
+Bạn cũng có thể sử dụng `count` với biểu thức điều kiện để tạo tài nguyên một cách có điều kiện.
+
+#### Ví dụ: Tạo Tài Nguyên Có Điều Kiện
+
+```hcl
+variable "create_instance" {
+  type    = bool
+  default = true
+}
+
+resource "aws_instance" "example" {
+  count = var.create_instance ? 1 : 0
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+Trong ví dụ này, tài nguyên EC2 sẽ chỉ được tạo nếu `create_instance` là `true`.
+
+### 4. Sử dụng `count` trong Modules
+
+Bạn cũng có thể sử dụng `count` trong các module để tái sử dụng cấu hình.
+
+#### Ví dụ: Sử Dụng Module với `count`
+
+`main.tf`
+```hcl
+module "server" {
+  source = "./modules/server"
+  count  = 3
+  
+  instance_type = "t2.micro"
+  ami           = "ami-0c55b159cbfafe1f0"
+}
+```
+
+`modules/server/main.tf`
+```hcl
+variable "instance_type" {
+  type = string
+}
+
+variable "ami" {
+  type = string
+}
+
+resource "aws_instance" "example" {
+  ami           = var.ami
+  instance_type = var.instance_type
+
+  tags = {
+    Name = "example-instance-${count.index}"
+  }
+}
+```
+
+### 5. Ví dụ Hoàn Chỉnh
+
+#### `variables.tf`
+```hcl
+variable "availability_zones" {
+  type = list(string)
+  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+```
+
+#### `main.tf`
+```hcl
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_instance" "example" {
+  count = length(var.availability_zones)
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  availability_zone = var.availability_zones[count.index]
+
+  tags = {
+    Name = "example-instance-${count.index}"
+  }
+}
+```
+
+### Tổng kết
+
+- **`count`:** Sử dụng để chỉ định số lượng bản sao của tài nguyên.
+- **`count.index`:** Sử dụng để truy cập chỉ số của mỗi bản sao, bắt đầu từ 0.
+
+Sử dụng `count` và `count.index` giúp cấu hình Terraform của bạn trở nên linh hoạt và có khả năng mở rộng hơn. Bạn có thể dễ dàng tạo nhiều tài nguyên với các thuộc tính tương tự mà không cần lặp lại mã nguồn, cũng như quản lý các tài nguyên có điều kiện và trong các module một cách hiệu quả. Nếu bạn có bất kỳ câu hỏi nào hoặc cần trợ giúp cụ thể, hãy cho tôi biết!
+## Terraform Conditional Expressions
+Trong Terraform, biểu thức điều kiện (conditional expressions) cho phép bạn điều chỉnh giá trị dựa trên điều kiện nào đó. Điều này rất hữu ích khi bạn muốn thực hiện các cấu hình có điều kiện mà không phải sao chép mã nguồn. 
+
+### 1. Cú pháp của Biểu thức Điều kiện
+
+Biểu thức điều kiện trong Terraform có cú pháp như sau:
+
+```hcl
+condition ? true_value : false_value
+```
+
+- `condition`: Điều kiện bạn muốn kiểm tra, thường là một biểu thức boolean.
+- `true_value`: Giá trị được trả về nếu điều kiện là `true`.
+- `false_value`: Giá trị được trả về nếu điều kiện là `false`.
+
+### 2. Ví dụ về Biểu thức Điều kiện
+
+#### a. Sử dụng Biến Boolean để Tạo Tài Nguyên Có Điều Kiện
+
+Giả sử bạn muốn tạo một phiên bản EC2 chỉ khi một biến boolean là `true`:
+
+```hcl
+variable "create_instance" {
+  type    = bool
+  default = true
+}
+
+resource "aws_instance" "example" {
+  count = var.create_instance ? 1 : 0
+  
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+#### b. Thiết lập Giá trị Có Điều Kiện
+
+Giả sử bạn muốn thiết lập một loại instance dựa trên một điều kiện:
+
+```hcl
+variable "environment" {
+  type    = string
+  default = "dev"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.environment == "production" ? "m5.large" : "t2.micro"
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+### 3. Sử dụng Biểu thức Điều kiện với Các Biến Phức Tạp
+
+#### a. Chọn Giá trị từ Danh sách
+
+Giả sử bạn có một danh sách các vùng sẵn sàng và bạn muốn chọn vùng đầu tiên nếu một biến boolean là `true`:
+
+```hcl
+variable "use_first_az" {
+  type    = bool
+  default = true
+}
+
+variable "availability_zones" {
+  type = list(string)
+  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  availability_zone = var.use_first_az ? var.availability_zones[0] : var.availability_zones[1]
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+#### b. Điều Kiện với Đối Tượng
+
+Bạn cũng có thể sử dụng biểu thức điều kiện để chọn một đối tượng hoặc một phần của đối tượng:
+
+```hcl
+variable "environment" {
+  type = string
+}
+
+locals {
+  instance_config = var.environment == "production" ? {
+    instance_type = "m5.large"
+    ami           = "ami-12345678"
+  } : {
+    instance_type = "t2.micro"
+    ami           = "ami-87654321"
+  }
+}
+
+resource "aws_instance" "example" {
+  ami           = local.instance_config.ami
+  instance_type = local.instance_config.instance_type
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+```
+
+### 4. Kết Hợp Biểu Thức Điều Kiện và Vòng Lặp `for`
+
+Bạn có thể sử dụng biểu thức điều kiện trong các vòng lặp để tạo danh sách hoặc bản đồ có điều kiện:
+
+```hcl
+variable "availability_zones" {
+  type = list(string)
+  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
+}
+
+locals {
+  enabled_zones = [for az in var.availability_zones : az if az != "us-west-2b"]
+}
+
+output "enabled_zones" {
+  value = local.enabled_zones
+}
+```
+
+### Tổng kết
+
+Biểu thức điều kiện trong Terraform là công cụ mạnh mẽ giúp bạn linh hoạt trong việc quản lý và điều chỉnh cấu hình của mình dựa trên các điều kiện cụ thể. Sử dụng đúng cách, biểu thức điều kiện có thể làm cho cấu hình Terraform của bạn trở nên hiệu quả và dễ bảo trì hơn.
