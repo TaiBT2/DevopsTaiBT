@@ -333,3 +333,129 @@ Bob 75
 ### Tổng kết
 
 `sed` là một công cụ mạnh mẽ và linh hoạt để xử lý văn bản trong dòng lệnh Linux. Với `sed`, bạn có thể thực hiện các thao tác từ đơn giản đến phức tạp trên các tệp văn bản. Nếu bạn cần xử lý các tác vụ cụ thể hoặc cần thêm trợ giúp, hãy cho tôi biết!
+## Find Command
+Lệnh `find` trong Linux được sử dụng để tìm kiếm tệp và thư mục trong hệ thống tệp dựa trên các tiêu chí cụ thể. Đây là một công cụ rất mạnh mẽ và linh hoạt. Dưới đây là một số ví dụ cụ thể về cách sử dụng lệnh `find`.
+
+### 1. Cú pháp cơ bản
+
+Cú pháp cơ bản của lệnh `find`:
+```sh
+find [path] [options] [expression]
+```
+- `[path]`: Đường dẫn bắt đầu tìm kiếm (thư mục gốc).
+- `[options]`: Các tùy chọn bổ sung (ví dụ: `-name`, `-type`).
+- `[expression]`: Biểu thức để khớp với tệp hoặc thư mục.
+
+### 2. Ví dụ cơ bản
+
+1. **Tìm tất cả các tệp trong thư mục hiện tại và các thư mục con:**
+   ```sh
+   find .
+   ```
+
+2. **Tìm tệp có tên cụ thể, ví dụ `example.txt`, trong thư mục hiện tại và các thư mục con:**
+   ```sh
+   find . -name "example.txt"
+   ```
+
+3. **Tìm tệp có tên cụ thể không phân biệt chữ hoa chữ thường:**
+   ```sh
+   find . -iname "example.txt"
+   ```
+
+4. **Tìm tất cả các thư mục trong thư mục hiện tại và các thư mục con:**
+   ```sh
+   find . -type d
+   ```
+   - `-type d`: Chỉ tìm kiếm thư mục.
+
+5. **Tìm tất cả các tệp có phần mở rộng `.txt` trong thư mục hiện tại và các thư mục con:**
+   ```sh
+   find . -name "*.txt"
+   ```
+
+### 3. Các ví dụ nâng cao
+
+1. **Tìm tệp lớn hơn 100MB:**
+   ```sh
+   find . -type f -size +100M
+   ```
+   - `-type f`: Chỉ tìm kiếm tệp.
+   - `-size +100M`: Tìm tệp có kích thước lớn hơn 100 megabytes.
+
+2. **Tìm tệp được sửa đổi trong vòng 7 ngày qua:**
+   ```sh
+   find . -type f -mtime -7
+   ```
+   - `-mtime -7`: Tìm tệp được sửa đổi trong vòng 7 ngày qua.
+
+3. **Tìm tệp được truy cập trong vòng 7 ngày qua:**
+   ```sh
+   find . -type f -atime -7
+   ```
+   - `-atime -7`: Tìm tệp được truy cập trong vòng 7 ngày qua.
+
+4. **Tìm tệp được sửa đổi hơn 30 ngày trước:**
+   ```sh
+   find . -type f -mtime +30
+   ```
+   - `-mtime +30`: Tìm tệp được sửa đổi hơn 30 ngày trước.
+
+5. **Tìm tệp thuộc về một người dùng cụ thể:**
+   ```sh
+   find . -type f -user username
+   ```
+   - `-user username`: Tìm tệp thuộc về người dùng `username`.
+
+6. **Tìm tệp có quyền cụ thể, ví dụ 644:**
+   ```sh
+   find . -type f -perm 644
+   ```
+   - `-perm 644`: Tìm tệp có quyền 644.
+
+### 4. Thực hiện hành động trên tệp tìm thấy
+
+1. **Xóa tệp có phần mở rộng `.tmp`:**
+   ```sh
+   find . -type f -name "*.tmp" -exec rm {} +
+   ```
+   - `-exec rm {} +`: Xóa các tệp được tìm thấy. `{}` đại diện cho tệp được tìm thấy, và `+` kết thúc lệnh `-exec`.
+
+2. **In thông tin chi tiết về tệp:**
+   ```sh
+   find . -type f -name "*.txt" -exec ls -l {} +
+   ```
+
+3. **Thay đổi quyền của các tệp:**
+   ```sh
+   find . -type f -name "*.sh" -exec chmod 755 {} +
+   ```
+
+### 5. Ví dụ đầy đủ
+
+Giả sử bạn muốn tìm tất cả các tệp `.log` trong thư mục `/var/logs` được sửa đổi trong vòng 7 ngày qua và xóa chúng:
+
+```sh
+find /var/logs -type f -name "*.log" -mtime -7 -exec rm {} +
+```
+
+- `/var/logs`: Thư mục bắt đầu tìm kiếm.
+- `-type f`: Chỉ tìm kiếm tệp.
+- `-name "*.log"`: Tìm tệp có phần mở rộng `.log`.
+- `-mtime -7`: Tìm tệp được sửa đổi trong vòng 7 ngày qua.
+- `-exec rm {} +`: Xóa các tệp tìm thấy.
+
+### 6. Tìm kiếm theo nội dung tệp
+
+Để tìm các tệp có chứa một mẫu cụ thể trong nội dung, bạn có thể kết hợp `find` với `grep`:
+
+1. **Tìm tất cả các tệp `.txt` chứa từ "error":**
+   ```sh
+   find . -type f -name "*.txt" -exec grep -l "error" {} +
+   ```
+
+   - `grep -l "error"`: Tìm tệp chứa từ "error" và chỉ in tên tệp.
+
+### Tổng kết
+
+Lệnh `find` là một công cụ rất mạnh mẽ và linh hoạt để tìm kiếm tệp và thư mục trong hệ thống tệp Linux. Bạn có thể sử dụng các tùy chọn và biểu thức khác nhau để tùy chỉnh tìm kiếm của mình. Nếu bạn cần tìm kiếm cụ thể hoặc thực hiện hành động trên các tệp tìm thấy, `find` có thể là công cụ rất hữu ích. Nếu bạn có bất kỳ câu hỏi cụ thể nào hoặc cần giúp đỡ thêm, hãy cho tôi biết!
