@@ -1127,3 +1127,41 @@ output "dirname_example" {
 ### Tổng kết
 
 Terraform cung cấp rất nhiều hàm để xử lý dữ liệu trong cấu hình của bạn. Việc nắm vững và sử dụng các hàm này sẽ giúp bạn tạo ra các cấu hình Terraform mạnh mẽ, linh hoạt và dễ bảo trì hơn. Nếu bạn cần thêm ví dụ hoặc có câu hỏi cụ thể về các hàm khác, hãy cho tôi biết!
+## Terraform Data sources
+Trong Terraform, Data Sources (Nguồn Dữ Liệu) cho phép bạn truy vấn thông tin từ nhà cung cấp cơ sở hạ tầng và sử dụng thông tin đó trong cấu hình của bạn. Chúng rất hữu ích khi bạn muốn tham chiếu đến các tài nguyên tồn tại ngoài cấu hình của bạn hoặc sử dụng thông tin động từ môi trường hiện tại.
+
+### 1. Khái Niệm về Data Sources
+
+Data sources không tạo hoặc thay đổi bất kỳ tài nguyên nào, mà chỉ truy vấn thông tin từ nhà cung cấp (provider). Kết quả của truy vấn này có thể được sử dụng để tạo các tài nguyên mới hoặc điều chỉnh các tài nguyên hiện có trong cấu hình của bạn.
+
+### 2. Cú Pháp của Data Sources
+
+Cú pháp cơ bản để định nghĩa một data source trong Terraform là:
+
+```hcl
+data "provider_name_resource_type" "local_name" {
+  # Configuration arguments
+}
+```
+
+- `provider_name`: Tên của nhà cung cấp (ví dụ: `aws`, `azurerm`, `google`).
+- `resource_type`: Loại tài nguyên mà bạn đang truy vấn (ví dụ: `aws_instance`, `azurerm_resource_group`).
+- `local_name`: Tên địa phương để tham chiếu đến data source trong cấu hình.
+
+### 3. Ví Dụ về Data Sources
+
+#### a. AWS EC2 Instance
+
+Giả sử bạn muốn truy vấn thông tin về một instance EC2 cụ thể dựa trên ID của nó:
+
+```hcl
+data "aws_instance" "example" {
+  instance_id = "i-1234567890abcdef0"
+}
+
+output "instance_public_ip" {
+  value = data.aws_instance.example.public_ip
+}
+```
+
+Trong ví dụ này, Terraform sẽ truy vấn thông tin về instance
