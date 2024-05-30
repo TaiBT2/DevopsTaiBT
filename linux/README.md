@@ -98,6 +98,7 @@ sudo ln -s /snap/bin/certbot /usr/bin/certbot
 ```
 sudo certbot --nginx
 ```
+<<<<<<< HEAD
 ## AWK
 Sử dụng `awk` để in các dòng khớp với một mẫu (pattern) là một trong những ứng dụng cơ bản và mạnh mẽ của công cụ này. Dưới đây là hướng dẫn chi tiết và các ví dụ về cách thực hiện điều này.
 
@@ -333,3 +334,13 @@ Bob 75
 ### Tổng kết
 
 `sed` là một công cụ mạnh mẽ và linh hoạt để xử lý văn bản trong dòng lệnh Linux. Với `sed`, bạn có thể thực hiện các thao tác từ đơn giản đến phức tạp trên các tệp văn bản. Nếu bạn cần xử lý các tác vụ cụ thể hoặc cần thêm trợ giúp, hãy cho tôi biết!
+=======
+## Find age's file and remove
+```
+find /mnt/backup -maxdepth 1 -type f  -mtime +2 -name "*.sql"  -exec rm  {} \;
+```
+- find age of file
+```
+$((($(date +%s) - $(date +%s -r agent.jar ))/86400)) > 7));then echo hello; fi
+```
+>>>>>>> 750e5e4c3e203c6cab7ca40030b5dd9d8412426a
