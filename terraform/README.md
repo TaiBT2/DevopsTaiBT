@@ -211,3 +211,111 @@ output "instance_id" {
 - **Resources** là các thành phần của cơ sở hạ tầng mà bạn muốn quản lý.
 
 Việc hiểu và sử dụng đúng cách hai khái niệm này là cơ bản và quan trọng để quản lý cơ sở hạ tầng một cách hiệu quả với Terraform. Nếu bạn có bất kỳ câu hỏi cụ thể nào hoặc cần thêm ví dụ, hãy cho tôi biết!
+## Terraform state file
+Trong Terraform, tệp trạng thái (state file) là một thành phần quan trọng để quản lý và theo dõi cơ sở hạ tầng của bạn. Tệp trạng thái lưu trữ thông tin về các tài nguyên đã được tạo và cấu hình bởi Terraform, giúp Terraform biết được trạng thái hiện tại của cơ sở hạ tầng và quyết định các thay đổi cần thiết khi bạn chạy các lệnh như `terraform apply`.
+
+### 1. Tổng quan về Tệp Trạng thái
+
+- **Lưu trữ trạng thái:** Tệp trạng thái giữ thông tin về cấu hình của bạn, các tài nguyên đã tạo, và các thuộc tính của chúng.
+- **Theo dõi thay đổi:** Terraform sử dụng tệp trạng thái để so sánh cấu hình hiện tại với cấu hình mong muốn và xác định các thay đổi cần thiết.
+- **Tăng tốc quá trình:** Tệp trạng thái giúp Terraform không cần phải liên hệ với API của nhà cung cấp dịch vụ để lấy thông tin về các tài nguyên mỗi khi chạy lệnh.
+
+### 2. Vị trí của Tệp Trạng thái
+
+Mặc định, tệp trạng thái được lưu trữ cục bộ trong tệp `terraform.tfstate` trong thư mục làm việc hiện tại. Tuy nhiên, trong môi trường làm việc nhóm hoặc khi làm việc với cơ sở hạ tầng lớn, việc lưu trữ tệp trạng thái cục bộ có thể gây ra các vấn đề về đồng bộ và bảo mật.
+
+### 3. Lưu trữ Tệp Trạng thái Từ xa
+
+Để khắc phục các vấn đề trên, Terraform hỗ trợ việc lưu trữ tệp trạng thái từ xa (remote state) thông qua các backends như Amazon S3, Azure Blob Storage, Google Cloud Storage, HashiCorp Consul, Terraform Cloud, v.v.
+
+#### Ví dụ: Sử dụng Amazon S3 làm Backend
+
+1. **Cấu hình Backend:**
+
+   Tạo một tệp `backend.tf` và cấu hình backend S3 như sau:
+
+   ```hcl
+   terraform {
+     backend "s3" {
+       bucket         = "my-terraform-state-bucket"
+       key            = "path/to/my/key"
+       region         = "us-west-2"
+       dynamodb_table = "my-lock-table"
+     }
+   }
+   ```
+
+   - `bucket`: Tên của bucket S3.
+   - `key`: Đường dẫn đến tệp trạng thái trong bucket S3.
+   - `region`: Vùng của bucket S3.
+   - `dynamodb_table`: Tên của bảng DynamoDB để khóa trạng thái, tránh xung đột khi nhiều người dùng thao tác cùng lúc.
+
+2. **Khởi tạo Backend:**
+
+   Chạy lệnh `terraform init` để khởi tạo cấu hình backend.
+
+   ```sh
+   terraform init
+   ```
+
+### 4. Các Lệnh Liên Quan đến Tệp Trạng thái
+
+- **`terraform state list`:** Liệt kê tất cả các tài nguyên trong tệp trạng thái.
+  ```sh
+  terraform state list
+  ```
+
+- **`terraform state show [resource]`:** Hiển thị chi tiết một tài nguyên cụ thể trong tệp trạng thái.
+  ```sh
+  terraform state show aws_instance.example
+  ```
+
+- **`terraform state mv [source] [destination]`:** Di chuyển tài nguyên trong tệp trạng thái.
+  ```sh
+  terraform state mv aws_instance.example aws_instance.new_example
+  ```
+
+- **`terraform state rm [resource]`:** Xóa một tài nguyên khỏi tệp trạng thái.
+  ```sh
+  terraform state rm aws_instance.example
+  ```
+
+- **`terraform state pull`:** Tải xuống tệp trạng thái từ backend từ xa và hiển thị nội dung.
+  ```sh
+  terraform state pull
+  ```
+
+- **`terraform state push`:** Đẩy tệp trạng thái cục bộ lên backend từ xa.
+  ```sh
+  terraform state push
+  ```
+
+### 5. Mã hóa và Bảo mật Tệp Trạng thái
+
+Vì tệp trạng thái chứa thông tin nhạy cảm (như mật khẩu, khóa API), việc bảo mật tệp trạng thái là rất quan trọng. Khi lưu trữ tệp trạng thái từ xa, bạn nên:
+
+- **Mã hóa tệp trạng thái:** Sử dụng các tính năng mã hóa của backend lưu trữ. Ví dụ, với S3, bạn có thể sử dụng mã hóa phía server (SSE).
+- **Kiểm soát truy cập:** Sử dụng các chính sách IAM hoặc ACL để kiểm soát truy cập vào bucket lưu trữ tệp trạng thái.
+- **Sử dụng khóa trạng thái:** Sử dụng DynamoDB hoặc các hệ thống khóa tương tự để ngăn ngừa xung đột khi nhiều người dùng thao tác cùng lúc.
+
+### Ví dụ Mã hóa và Kiểm soát Truy cập với S3 và DynamoDB
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "my-terraform-state-bucket"
+    key            = "path/to/my/key"
+    region         = "us-west-2"
+    dynamodb_table = "my-lock-table"
+    encrypt        = true
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+}
+```
+
+### Tổng kết
+
+Tệp trạng thái là thành phần cốt lõi trong Terraform, giúp quản lý và theo dõi trạng thái cơ sở hạ tầng. Việc sử dụng backend từ xa cho tệp trạng thái giúp bạn làm việc hiệu quả hơn trong môi trường nhóm và bảo mật tốt hơn. Hãy đảm bảo mã hóa và kiểm soát truy cập tệp trạng thái để bảo vệ thông tin nhạy cảm của bạn. Nếu bạn có bất kỳ câu hỏi cụ thể nào hoặc cần thêm ví dụ, hãy cho tôi biết!
