@@ -933,3 +933,197 @@ output "enabled_zones" {
 ### Tổng kết
 
 Biểu thức điều kiện trong Terraform là công cụ mạnh mẽ giúp bạn linh hoạt trong việc quản lý và điều chỉnh cấu hình của mình dựa trên các điều kiện cụ thể. Sử dụng đúng cách, biểu thức điều kiện có thể làm cho cấu hình Terraform của bạn trở nên hiệu quả và dễ bảo trì hơn.
+## Terraform function 
+Terraform cung cấp một loạt các hàm (functions) để xử lý và thao tác dữ liệu trong cấu hình của bạn. Các hàm này giúp bạn thực hiện các phép toán, chuỗi, danh sách, bản đồ, và các thao tác khác một cách dễ dàng. Dưới đây là một số hàm phổ biến và cách sử dụng chúng.
+
+### 1. Hàm Toán học
+
+#### `abs`
+
+Trả về giá trị tuyệt đối của một số.
+
+```hcl
+output "abs_example" {
+  value = abs(-5)  # Trả về 5
+}
+```
+
+#### `max`
+
+Trả về giá trị lớn nhất từ các đối số.
+
+```hcl
+output "max_example" {
+  value = max(5, 10, 3)  # Trả về 10
+}
+```
+
+#### `min`
+
+Trả về giá trị nhỏ nhất từ các đối số.
+
+```hcl
+output "min_example" {
+  value = min(5, 10, 3)  # Trả về 3
+}
+```
+
+### 2. Hàm Chuỗi
+
+#### `concat`
+
+Nối các chuỗi hoặc danh sách với nhau.
+
+```hcl
+output "concat_example" {
+  value = concat(["a", "b"], ["c", "d"])  # Trả về ["a", "b", "c", "d"]
+}
+```
+
+#### `join`
+
+Kết hợp các phần tử của danh sách thành một chuỗi duy nhất, ngăn cách bằng một chuỗi cho trước.
+
+```hcl
+output "join_example" {
+  value = join(", ", ["a", "b", "c"])  # Trả về "a, b, c"
+}
+```
+
+#### `split`
+
+Chia một chuỗi thành một danh sách các chuỗi con dựa trên một ký tự ngăn cách.
+
+```hcl
+output "split_example" {
+  value = split(", ", "a, b, c")  # Trả về ["a", "b", "c"]
+}
+```
+
+### 3. Hàm Danh sách và Bản đồ
+
+#### `length`
+
+Trả về số lượng phần tử trong một danh sách hoặc bản đồ.
+
+```hcl
+output "length_example" {
+  value = length(["a", "b", "c"])  # Trả về 3
+}
+```
+
+#### `merge`
+
+Kết hợp nhiều bản đồ thành một bản đồ duy nhất.
+
+```hcl
+output "merge_example" {
+  value = merge({a = 1, b = 2}, {c = 3, d = 4})  # Trả về {a = 1, b = 2, c = 3, d = 4}
+}
+```
+
+#### `lookup`
+
+Trả về giá trị của một khóa trong một bản đồ, hoặc giá trị mặc định nếu khóa không tồn tại.
+
+```hcl
+output "lookup_example" {
+  value = lookup({a = 1, b = 2}, "b", 0)  # Trả về 2
+}
+```
+
+### 4. Hàm Điều kiện
+
+#### `coalesce`
+
+Trả về giá trị không null đầu tiên từ các đối số.
+
+```hcl
+output "coalesce_example" {
+  value = coalesce(null, null, "default", "value")  # Trả về "default"
+}
+```
+
+#### `condition ? true_value : false_value`
+
+Biểu thức điều kiện, trả về giá trị dựa trên điều kiện boolean.
+
+```hcl
+variable "env" {
+  default = "production"
+}
+
+output "instance_type" {
+  value = var.env == "production" ? "m5.large" : "t2.micro"
+}
+```
+
+### 5. Hàm Ngày và Thời gian
+
+#### `timestamp`
+
+Trả về thời gian hiện tại dưới dạng chuỗi ISO 8601.
+
+```hcl
+output "timestamp_example" {
+  value = timestamp()  # Trả về "2024-05-30T12:34:56Z" (ví dụ)
+}
+```
+
+#### `timeadd`
+
+Cộng thêm một khoảng thời gian vào một thời điểm.
+
+```hcl
+output "timeadd_example" {
+  value = timeadd("2024-05-30T12:34:56Z", "72h")  # Trả về "2024-06-02T12:34:56Z"
+}
+```
+
+### 6. Hàm Điều khiển
+
+#### `element`
+
+Trả về phần tử tại vị trí cụ thể trong một danh sách.
+
+```hcl
+output "element_example" {
+  value = element(["a", "b", "c"], 1)  # Trả về "b"
+}
+```
+
+#### `slice`
+
+Trả về một phần của danh sách từ vị trí bắt đầu đến vị trí kết thúc.
+
+```hcl
+output "slice_example" {
+  value = slice(["a", "b", "c", "d"], 1, 3)  # Trả về ["b", "c"]
+}
+```
+
+### 7. Hàm Hệ thống
+
+#### `file`
+
+Đọc nội dung của một tệp và trả về dưới dạng chuỗi.
+
+```hcl
+output "file_example" {
+  value = file("path/to/file.txt")
+}
+```
+
+#### `dirname`
+
+Trả về tên thư mục chứa tệp.
+
+```hcl
+output "dirname_example" {
+  value = dirname("path/to/file.txt")  # Trả về "path/to"
+}
+```
+
+### Tổng kết
+
+Terraform cung cấp rất nhiều hàm để xử lý dữ liệu trong cấu hình của bạn. Việc nắm vững và sử dụng các hàm này sẽ giúp bạn tạo ra các cấu hình Terraform mạnh mẽ, linh hoạt và dễ bảo trì hơn. Nếu bạn cần thêm ví dụ hoặc có câu hỏi cụ thể về các hàm khác, hãy cho tôi biết!
