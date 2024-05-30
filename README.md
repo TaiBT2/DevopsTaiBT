@@ -701,3 +701,261 @@ done
 - sudo fdisk /dev/sda (press enter) create partition disk
 - mount /dev/sda1 /mnt/backup mount volume
 ```
+## Nexus Setting
+- Stafulset
+```
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nexus
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus3
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nexus3
+    spec:
+      containers:
+        - name: nexus3
+          image: sonatype/nexus3:latest
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+            - containerPort: 8082
+              protocol: TCP
+            - containerPort: 8083
+              protocol: TCP              
+          resources: {}
+          volumeMounts:
+            - name: nexus-data2
+              mountPath: /nexus-data
+          imagePullPolicy: Always
+  volumeClaimTemplates:
+    - kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: nexus-data2
+        creationTimestamp: null
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+        storageClassName: nfs-csi-retain
+        volumeMode: Filesystem
+
+```
+- Service resource
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus3
+  namespace: jenkins
+spec:
+  ports:
+    - name: host
+      protocol: TCP
+      port: 8081
+      targetPort: 8081
+    - name: proxy
+      protocol: TCP
+      port: 8082
+      targetPort: 8082
+  selector:
+    app: nexus3
+  type: ClusterIP
+```
+- change password
+- enable anonymous
+-  config nexus create hub docker (type hosted)
+```
+Click Security > Realms
+Add the 'Docker Bearer Token Realm'
+Click 'Save'
+
+create  new repo type: hosted
+HTTP: 8082
+
+Enable Docker V1 API
+
+```
+- more infor: 
+```
+Group — grouping hosted Docker together for easy access granting
+Hosted — We will use this. Normal private repos
+Proxy — not yet this, this is for forward to download from e.g. Docker hub
+link: https://medium.com/codemonday/setup-nexus-oss-on-docker-as-docker-registry-for-learning-748c23f0b951
+```
+- 
+## REGEX
+```
+
+khi tôi tạo 1 agent docker để làm agent node cho jenkins bằng ssh thì gặp lỗi Server listening on :: port 22.
+Invalid user dg1-swe-sv from 10.20.23.197 port 36614
+Connection closed by invalid user dg1-swe-sv 10.20.23.197 port 36614 [preauth]
+ChatGPT
+Lỗi này cho thấy rằng Jenkins đang cố gắng kết nối với agent Docker qua SSH, nhưng người dùng mà Jenkins đang sử dụng để kết nối (dg1-swe-sv) không tồn tại trên container Docker. Để giải quyết vấn đề này, bạn có thể thực hiện các bước sau:
+
+Tạo người dùng SSH trong container Docker:
+Đảm bảo rằng người dùng dg1-swe-sv tồn tại trong container Docker. Bạn có thể thêm người dùng này bằng cách sửa Dockerfile của bạn hoặc chạy lệnh trực tiếp trong container.
+
+Nếu bạn sử dụng Dockerfile, thêm dòng sau:
+
+Dockerfile
+Copy code
+RUN useradd -m -s /bin/bash dg1-swe-sv
+Nếu bạn muốn tạo người dùng trực tiếp trong container đang chạy:
+
+sh
+Copy code
+docker exec -it <container_id> bash
+useradd -m -s /bin/bash dg1-swe-sv
+Thiết lập SSH keys:
+Bạn cần đảm bảo rằng Jenkins có thể xác thực với agent Docker qua SSH bằng cách sử dụng SSH keys. Đầu tiên, bạn cần tạo SSH key (nếu chưa có):
+
+sh
+Copy code
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/jenkins_agent_key
+Sau đó, copy public key vào file ~/.ssh/authorized_keys của người dùng dg1-swe-sv trong container Docker.
+
+sh
+Copy code
+cat ~/.ssh/jenkins_agent_key.pub | docker exec -i <container_id> bash -c 'cat >> /home/dg1-swe-sv/.ssh/authorized_keys'
+Cấu hình Jenkins để sử dụng SSH key:
+Trong Jenkins, vào Manage Jenkins > Manage Nodes. Chọn node tương ứng và cấu hình thông tin kết nối SSH. Đảm bảo bạn sử dụng đường dẫn đến private key đã tạo ở bước trước (~/.ssh/jenkins_agent_key).
+
+Kiểm tra SSH server trong container:
+Đảm bảo rằng SSH server đang chạy trong container Docker. Bạn có thể kiểm tra bằng cách chạy lệnh sau trong container:
+
+sh
+Copy code
+service ssh status
+Nếu SSH server chưa chạy, bạn có thể khởi động nó bằng lệnh:
+
+sh
+Copy code
+service ssh start
+Cấu hình quyền sở hữu và quyền truy cập cho SSH:
+Đảm bảo rằng quyền sở hữu và quyền truy cập cho các file SSH là chính xác:
+
+sh
+Copy code
+docker exec -it <container_id> bash
+chown -R dg1-swe-sv:dg1-swe-sv /home/dg1-swe-sv/.ssh
+chmod 700 /home/dg1-swe-sv/.ssh
+chmod 600 /home/dg1-swe-sv/.ssh/authorized_keys
+Sau khi thực hiện các bước trên, Jenkins nên có thể kết nối với agent Docker qua SSH mà không gặp lỗi "Invalid user".
+
+bây giờ thì tôi dùng user root nhưng vẫn ko được Connection closed by authenticating user root 10.20.23.197 port 51589 [preauth]
+ChatGPT
+Nếu bạn vẫn gặp lỗi "Connection closed by authenticating user root" khi sử dụng người dùng root, có thể có một số vấn đề liên quan đến cấu hình SSH hoặc Docker container. Dưới đây là các bước chi tiết để kiểm tra và khắc phục:
+
+Kiểm tra SSH Server:
+Đảm bảo rằng SSH server đang chạy trong container Docker:
+
+sh
+Copy code
+docker exec -it <container_id> service ssh status
+Nếu SSH server chưa chạy, khởi động nó bằng lệnh:
+
+sh
+Copy code
+docker exec -it <container_id> service ssh start
+Kiểm tra cấu hình SSH:
+Đảm bảo rằng cấu hình SSH trong container Docker cho phép đăng nhập root. Mở file /etc/ssh/sshd_config và kiểm tra các dòng sau:
+
+sh
+Copy code
+docker exec -it <container_id> bash
+nano /etc/ssh/sshd_config
+Cho phép đăng nhập root:
+sh
+Copy code
+PermitRootLogin yes
+Đảm bảo SSH sử dụng phương thức xác thực bằng key:
+sh
+Copy code
+PubkeyAuthentication yes
+Sau khi chỉnh sửa, khởi động lại SSH server:
+
+sh
+Copy code
+service ssh restart
+Thiết lập SSH keys cho root:
+Đảm bảo rằng key công khai của Jenkins đã được thêm vào ~/.ssh/authorized_keys của người dùng root trong container:
+
+sh
+Copy code
+cat ~/.ssh/jenkins_agent_key.pub | docker exec -i <container_id> bash -c 'cat >> /root/.ssh/authorized_keys'
+Thiết lập quyền sở hữu và quyền truy cập:
+Đảm bảo rằng các file SSH có quyền sở hữu và quyền truy cập chính xác:
+
+sh
+Copy code
+docker exec -it <container_id> bash
+chown -R root:root /root/.ssh
+chmod 700 /root/.ssh
+chmod 600 /root/.ssh/authorized_keys
+Kiểm tra kết nối SSH từ máy Jenkins:
+Thử kết nối trực tiếp từ máy Jenkins đến container Docker bằng SSH để kiểm tra xem có vấn đề gì không:
+
+sh
+Copy code
+ssh -i ~/.ssh/jenkins_agent_key root@<docker_container_ip>
+Nếu kết nối này thành công, vấn đề có thể nằm ở cấu hình Jenkins.
+
+Cấu hình Jenkins để sử dụng SSH key:
+Trong Jenkins, vào Manage Jenkins > Manage Nodes. Chọn node tương ứng và cấu hình thông tin kết nối SSH. Đảm bảo bạn sử dụng đường dẫn đến private key đã tạo (~/.ssh/jenkins_agent_key).
+
+Kiểm tra logs của SSH server:
+Kiểm tra logs của SSH server trong container để xem thông tin chi tiết về lỗi:
+
+sh
+Copy code
+docker exec -it <container_id> tail -f /var/log/auth.log
+Nếu bạn đã thực hiện tất cả các bước trên mà vẫn gặp vấn đề, vui lòng cung cấp thêm thông tin về logs của SSH server để có thể hỗ trợ chi tiết hơn.
+
+hướng dẫn tạo regexx
+ChatGPT
+Để tạo một biểu thức chính quy (regular expression - regex), bạn cần hiểu cú pháp và các thành phần cơ bản của regex. Regex là một công cụ mạnh mẽ để tìm kiếm và xử lý chuỗi văn bản. Dưới đây là một hướng dẫn cơ bản để tạo regex.
+
+1. Các thành phần cơ bản của regex
+Ký tự thường: Đại diện cho chính nó. Ví dụ: a khớp với ký tự 'a'.
+
+Ký tự đặc biệt:
+
+.: Khớp với bất kỳ ký tự nào ngoại trừ newline.
+\d: Khớp với bất kỳ chữ số nào (0-9).
+\w: Khớp với bất kỳ ký tự chữ cái, chữ số hoặc dấu gạch dưới.
+\s: Khớp với bất kỳ ký tự khoảng trắng nào (space, tab, newline).
+\b: Khớp với biên giới của từ (word boundary).
+\t: Khớp với tab.
+Ký tự đại diện:
+
+[abc]: Khớp với bất kỳ ký tự nào trong dấu ngoặc vuông.
+[a-z]: Khớp với bất kỳ ký tự nào từ a đến z.
+[^abc]: Khớp với bất kỳ ký tự nào không có trong dấu ngoặc vuông.
+Ký tự lặp lại:
+
+*: Khớp với 0 hoặc nhiều lần xuất hiện của ký tự trước đó.
++: Khớp với 1 hoặc nhiều lần xuất hiện của ký tự trước đó.
+?: Khớp với 0 hoặc 1 lần xuất hiện của ký tự trước đó.
+{n}: Khớp với chính xác n lần xuất hiện của ký tự trước đó.
+{n,}: Khớp với ít nhất n lần xuất hiện của ký tự trước đó.
+{n,m}: Khớp với ít nhất n và nhiều nhất m lần xuất hiện của ký tự trước đó.
+Nhóm và lựa chọn:
+
+(abc): Nhóm các ký tự lại với nhau.
+a|b: Khớp với a hoặc b.
+Ký tự neo:
+
+^: Khớp với bắt đầu chuỗi.
+$: Khớp với kết thúc chuỗi.
+```

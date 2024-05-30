@@ -1,35 +1,55 @@
-pipeline {
-    agent any
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout your Flutter project from version control
-                // ...
-            }
-        }
-        
-        stage('Build') {
-            steps {
-                /**
-                 * Build your Flutter project
-                 */
-                 
-            }
-        }
-        
-        stage('SonarQube Scan') {
-            steps {
-                // Run SonarQube scan for your Flutter project
-                // ...
-            }
-        }
-        
-        stage('Deploy') {
-            steps {
-                // Deploy your Flutter project
-                // ...
-            }
-        }
-    }
-}
+pipeline { 
+    agent any 
+    environment { 
+        GIT_URL = 'git@git.rikkei.org:dg1/singhai-group/singhai-fe-web.git' 
+        JENKINS_NODEJS_INS_NAME = 'NodeJS 18' //Contact Jenkins admin in case you want to use other NodeJS version 
+    } 
+    stages { 
+       stage('Checkout') { 
+            steps { 
+                cleanWs() 
+                script { 
+                    try { 
+                        def branchName = "develop" 
+                        if (env.gitlabSourceBranch != null) { 
+                            branchName = "${env.gitlabSourceBranch}"; 
+                        } 
+                        echo "branchName: ${branchName}" 
+                        git branch: "${branchName}", credentialsId: 'rikkei-cicd-git-ssh-private-key', url: "${GIT_URL}" 
+                    } catch(e) { 
+                        echo "Failed to clone the repository" 
+                    } 
+                } 
+            } 
+        } 
+        stage('SonarQube Analysis') { 
+            steps { 
+                script { 
+                    echo "Workspace: ${WORKSPACE}" 
+                    try { 
+                        def scannerHome = tool 'Rikkei SonarQube'; 
+                        echo "Scanner Home: ${scannerHome}" 
+                        nodejs(nodeJSInstallationName: "${JENKINS_NODEJS_INS_NAME}") { 
+                            withSonarQubeEnv(credentialsId: 'sonarqube-access-token', installationName: 'Rikkei SonarQube') { 
+                                sh """ 
+                                    ${scannerHome}/bin/sonar-scanner -Dsonar.projectBaseDir="${WORKSPACE}" 
+                                """ 
+                            } 
+                        } 
+                    } catch (e) { 
+                       echo "Error when analyze" 
+                    } 
+                } 
+            } 
+        } 
+        stage('Quality Gate') { 
+            steps { 
+                timeout(time: 30, unit: 'MINUTES') { 
+                    script { 
+                        waitForQualityGate(abortPipeline: false) 
+                    } 
+                } 
+            } 
+        } 
+    } 
+} 
