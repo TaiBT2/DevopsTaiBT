@@ -121,7 +121,9 @@ print("Shuffled list:", deck)
 # Đặt hạt giống cho bộ sinh số ngẫu nhiên
 random.seed(42)
 print("Random number with seed 42:", random.random())
-```### Offset and Appending Items to Lists in Python
+```
+## Offset and Appending Items to Lists
+### Offset and Appending Items to Lists in Python
 
 In Python, lists are ordered collections of items which are mutable, meaning you can change their content. Let's explore how to use offsets (also known as indexing) to access elements and how to append items to lists.
 
@@ -264,4 +266,3 @@ print("Middle numbers slice:", middle_numbers)
 This example covers basic operations you can perform on lists in Python, providing a solid foundation for working with this essential data structure.
 
 Kết quả sẽ thay đổi mỗi lần bạn chạy chương trình (trừ khi bạn đặt hạt giống), và bạn có thể thấy cách các hàm của module `random` được sử dụng để thao tác với các giá trị ngẫu nhiên.
-## Offset and Appending Items to Lists
