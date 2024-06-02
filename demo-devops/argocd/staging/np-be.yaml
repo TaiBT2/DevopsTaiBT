@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: np-be-dev
+  namespace: devops
+spec:
+  project: np
+  source:
+    repoURL: git@git.rikkei.org:devops/np-development.git
+    targetRevision: HEAD
+    path: helmchart/np-be
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: np
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true    

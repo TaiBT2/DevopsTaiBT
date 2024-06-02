@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dotalk-fe-dev
+  namespace: devops
+spec:
+  project: dotalk
+  source:
+    repoURL: git@git.rikkei.org:devops/dotalk-development.git
+    targetRevision: main
+    path: helmchart/dotalk-fe
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dotalk
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

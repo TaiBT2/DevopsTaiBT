@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: np-fe-dev
+  namespace: devops
+spec:
+  project: np
+  source:
+    repoURL: git@git.rikkei.org:devops/np-development.git
+    targetRevision: main
+    path: helmchart/np-fe
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: np
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

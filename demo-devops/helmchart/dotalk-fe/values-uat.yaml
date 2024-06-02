@@ -1,0 +1,130 @@
+nameOverride: singhai-fe
+fullnameOverride: ""
+
+image:
+  repository: nexusrepo.rikkei.org/np/be
+  pullPolicy: IfNotPresent
+  tag: 20240408045226-26
+
+imagePullSecrets:
+  name: regcred-repo-rk
+
+replicaCount: 1
+
+restartPolicy: Always
+
+maxSurge: 1
+maxUnavailable: 0
+
+env: client
+namespace: np-client
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+persistence:
+  enabled: false
+  storageClass: "regionalpd-storageclass"
+  accessMode: ReadWriteOnce
+  size: 512Mi
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: {}
+
+affinity: true
+
+command: []
+
+service:
+  type: ClusterIP
+  nameHttp: http
+  portHttp: 80
+  targetPortHttp: 80
+  nodePortHttp: 32150
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: npclient.rikkei.org
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+      - npclient.rikkei.org
+      secretName: npclient.rikkei.org
+
+livenessProbe: {}
+  # exec:
+  #   command:
+  #   - '/bin/sh'
+  #   - '-c'
+  #   - 'nc -z localhost 8253'
+  # initialDelaySeconds: 30
+  # periodSeconds: 10
+  # timeoutSeconds: 10
+  # failureThreshold: 10
+
+readinessProbe: {}
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # initialDelaySeconds: 60
+  # timeoutSeconds: 10
+
+startupProbe: {}
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # failureThreshold: 30
+  # periodSeconds: 10
+configMapData:
+  # GATE_WAY_PORT: "18085"
+  # REACT_APP_BACKEND_URL: "/api/v1"
+  # PORT: "4200"
+  # GENERATE_SOURCEMAP: "false"
+  # APP_PORT: "3000"
+  # REACT_APP_BACKEND_URL: "http://singhaiapi.vietnamfmc.site/api/v1"
+  # FE_URI: "http://npclient.rikkei.org"
+
+  
+  

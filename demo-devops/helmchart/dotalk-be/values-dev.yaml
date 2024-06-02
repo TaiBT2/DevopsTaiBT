@@ -1,0 +1,149 @@
+nameOverride: dotalk-be
+fullnameOverride: ""
+
+image:
+  repository: rkapp.vcenter.com.vn/dotalk-sdk/dev/be
+  pullPolicy: IfNotPresent
+  tag: sdkv3
+
+imagePullSecrets:
+  name: regcred-repo-rk
+
+replicaCount: 1
+
+restartPolicy: Always
+nodeName: svgd1-2
+maxSurge: 1
+maxUnavailable: 0
+
+env: dev
+namespace: dotalk
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+persistence:
+  enabled: false
+  storageClass: "nfs-csi-retain"
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: {}
+
+affinity: true
+
+command: []
+
+service:
+  type: NodePort
+  nameHttp: http
+  portHttp: 9000
+  targetPortHttp: 9000
+  nodePortHttp: 32090
+
+ingress:
+  enabled: false 
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: demo-dev-gcp-apigw.cleocircle.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+      - demo-dev-gcp-apigw.cleocircle.com
+      secretName: cleo-tls
+
+livenessProbe: {}
+  # exec:
+  #   command:
+  #   - '/bin/sh'
+  #   - '-c'
+  #   - 'nc -z localhost 8253'
+  # initialDelaySeconds: 30
+  # periodSeconds: 10
+  # timeoutSeconds: 10
+  # failureThreshold: 10
+
+readinessProbe: {}
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # initialDelaySeconds: 60
+  # timeoutSeconds: 10
+
+startupProbe: {}
+  # httpGet:
+  #   path: /actuator/health
+  #   port: 8080
+  #   httpHeaders:
+  #     - name: X-Device-ID
+  #       value: HealthCheck
+  # failureThreshold: 30
+  # periodSeconds: 10
+configMapData:
+  SITE: "http://10.20.22.168:4201"
+  APP_PORT: "9000"
+  DATABASE_URI: "mongodb://np_dev:123123@10.20.22.168:27018/np_dev"
+
+  GOOGLE_APPLICATION_CREDENTIALS: "./ocr_key.json"
+
+  GOOGLE_CLOUD_STORAGE_BUCKET: "np_production_pj"
+  PROJECT_ID: "np-foods-tts"
+  PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDp/9ltvWMxgVdE\nRO0TjeYZhmGY4h+ZszJ/P0+vGGx6fNL8GXYfbBxk/Ba45LkxMP5LcoLDRTQoobfX\nGdsEiGac5EINPREh5SGtWxMXtINFSZlkf/AuBi4kjxSJF4igrguA7tfi4Ca/Qrr8\njDNRcFGsoHr/Bx1xPOYhl/xtP33myavsm9m579EtnuCS2ZOPCxhRnUuun88WOL3t\nVHLWGylwc/FipRQ0QaY0K26hw9KLBDectqxzUM9C1R0IeBDzJu2NsUq8HJ/KSjeN\nhoqnmZtD1t9vW23Da8gbXZmn+r5qX+jNOmEh6fgjMoC+2LgIxdmycLen4mZJaFsk\n1E7JMa2/AgMBAAECggEAFRaCb5zd58llEMPOF8aLIj7AOeka+ZzdeVE+gE7zq8A8\nZWLICJc+IdhZazVAU/oQg20g8rHLEbmtRIcnJqFCRMkKA4EUM66fb9eMK2/lqqSy\nMbfumxSMgQKcp6mFcxxBm3oq3jPe2hAMo5OLpmm4ZUBwhTOMyDaO83UWgc6d1+Kl\nwQzlpQXBfuIToB7tNe0fTSr2HmlDoTByiYUnDmf4E/tu1tN4DI2KHcHVuCeipWsk\ndSkVLVnCVNGGMCLf1JNisiyb0sovr3SQqY5Df6sy1EzX+FksgPbxKx6mKioQAWAe\n2jSWSSMUA7sGi6JHZ+m2c/k/Nol7/NKLklAU3z2zAQKBgQD33cMbUqEkF6B7kKzZ\nFnNqCZ4FgdL0DLj3T8F+liw45lqOPkfQ34vC6ElLaVcXA5zKB+smhL+AUAcFoP6B\nQKw/16X0poTkMt8QvB4njA3ID5SlxSyIIyBal1MTO/2IZ4GbVShUOQrkJ+OiOF5g\nP2jjejNpPVU3NTq+NSXLIHRDAQKBgQDxrZi+jTACUvnxtBgyl6RDM1FR8tT8+H2D\nGcFOyWRnafdIaohwh/RPpRaoYA/4LDzrbvI+fRKecF+IoKpNvlE+bb1YWZIqAWn5\n6kEt/eeI7u+ijrQorm1jwrX0blz7B3qmoQihbzWO6kARzzXdMy8D4wXPXHEH0wP2\nqmOKu2OwvwKBgQDGaWld/MXrK1KWtxf16ufWcP5isCqam3iQ1/IvD600mwjQJoC8\nbcXl7qWFTTyeupCOlMoimk7lOqp0UgyIkKmRrWE2NvnX5fTz43JL++uoQvidvflI\nvL2QZuPkWLg5sYlpO0C+Mq9KNbgdSfwaFYgz18VBsAv/1odAbTDkqgUHAQKBgE+b\n83ixYWMimhq4TFA+C2nneZ4Y83fxEscgsMCXLm+yRDaigRcwcZXat7/3BMunJtoW\nzc0vvfZa5d1Hr1G0o2aBF6IGv1L+7D3aoGXaAW7l5iISB95utrHp7a36vL4kFI7W\n9NTYoTfWigxTyVZ4CcCqA7vuo30EUYXrUqbcW1ZZAoGAU9iSaJn4GEyOBoXBohZ8\nkIZZsBecO6pajnjMXycNwctc5zDG5voXk7BH4fG2jfS6I3sz8vB40qYpVO6CpmMJ\nSU9FIs4Mn4yIcHAjTpOsW84fA3xhYWij8Zy8XQEOzPsRLWJWHvwOPB7/ar7zCLHW\nfiHMMqqevb/xboqvc5Nbt4E=\n-----END PRIVATE KEY-----\n"
+  CLIENT_EMAIL: "np-ocr-project@np-foods-tts.iam.gserviceaccount.com"
+  STORAGE_MEDIA_BUCKET: "np_production_pj"
+
+  #mail
+  MAIL_HOST: "smtp.gmail.com"
+  MAIL_USER: "quangmv@rikkeisoft.com"
+  MAIL_PASSWORD: "gvjfxcrcxsknalvp"
+  MAIL_FROM: "N.P.Foods"
+  MAIL_SECURE: "true"
+  INTERNAL_EMAIL: "quangmv@rikkeisoft.com,thaodnp@rikkeisoft.com,thienvtm@rikkeisoft.com,manhht@rikkeisoft.com,hungnn@rikkeisoft.com,hoangbx@rikkeisoft.com,thanglb@rikkeisoft.com,vomythien2504.tt@gmail.com,logistic-np@techtiqsolution.com,sales-np@techtiqsolution.com,admin-np@techtiqsolution.com,accounts-np@techtiqsolution.com,qc-np@techtiqsolution.com"
+
+  #redis
+  REDIS_HOST: "10.20.22.168"
+  REDIS_PORT: "6379"
+  REDIS_DB: "7"
+  API_GET_CURRENCY: "https://www.uob.com.sg/data-api-rates/data-api/forexusd?dcr=/online-rates/data/foreign-exchange-rates-against-us-dollar"
+
+
+  
+  
