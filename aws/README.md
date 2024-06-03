@@ -46,5 +46,16 @@
 - Ví dụ aws config tạo rule là chỉ cho phép các ami nhất định thôi, nhưng nếu có ec2 nào ko dùng các ami quy định đó sẽ terminate đi.
 ## AWS system manager
 - Quản lý các ec2, truy xuất ec2 bảo mật, chỉ cần ec2 có role SSM và có SSM agent.
-##  Amazon Kinesis
-- 
+##  Amazon Appflow
+- AWS AppFlow là một dịch vụ tích hợp dữ liệu hoàn toàn quản lý, cho phép bạn truyền dữ liệu một cách an toàn giữa các ứng dụng SaaS (Software as a Service) như Salesforce, ServiceNow, Google Analytics, và các dịch vụ AWS như Amazon S3 và Amazon Redshift.
+## AWS Direct Connect
+- AWS Direct Connect là một dịch vụ mạng cung cấp kết nối chuyên dụng, riêng tư giữa cơ sở hạ tầng của bạn và Amazon Web Services (AWS).
+    1. Các bước sử dụng AWS Direct Connect
+        Đăng ký dịch vụ: Đăng ký một kết nối thông qua AWS Management Console.
+        Thiết lập kết nối vật lý: Thiết lập kết nối vật lý từ trung tâm dữ liệu của bạn đến một trong các địa điểm AWS Direct Connect.
+        Cấu hình mạng: Cấu hình các tham số mạng như VLAN, BGP và IP trên thiết bị mạng của bạn để kết nối với AWS.
+        Kích hoạt và kiểm tra kết nối: Sau khi thiết lập, kích hoạt và kiểm tra kết nối để đảm bảo nó hoạt động đúng.
+
+## AWS Macie
+- Amazon Macie là một dịch vụ bảo mật và quyền riêng tư của AWS sử dụng machine learning và các kỹ thuật pattern matching để phát hiện và bảo vệ dữ liệu nhạy cảm trong AWS. Macie tự động xác định và phân loại dữ liệu nhạy cảm như thông tin nhận dạng cá nhân (PII), thông tin thẻ tín dụng, dữ liệu sức khỏe, và các loại dữ liệu nhạy cảm khác trong các tài khoản Amazon S3. Macie cung cấp các báo cáo và cảnh báo về các phát hiện bảo mật, giúp bạn nhanh chóng phát hiện và ứng phó với các sự cố bảo mật. Các cảnh báo có thể được tích hợp với Amazon CloudWatch, AWS Security Hub, và các công cụ bảo mật khác.
+
