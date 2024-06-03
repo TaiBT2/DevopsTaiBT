@@ -214,3 +214,54 @@ Dưới đây là phân biệt giữa các loại lưu trữ khối (block stora
    - **Amazon S3 Glacier**: Lưu trữ dữ liệu dài hạn như tài liệu lưu trữ và sao lưu lịch sử.
 
 Mỗi loại lưu trữ có những ưu và nhược điểm riêng, phù hợp với các nhu cầu sử dụng khác nhau. Sự lựa chọn giữa chúng phụ thuộc vào yêu cầu cụ thể về hiệu suất, chi phí, và khả năng mở rộng của ứng dụng và dữ liệu.
+## AWS S3 TYPE
+Amazon S3 (Simple Storage Service) cung cấp các lớp lưu trữ khác nhau để đáp ứng các nhu cầu khác nhau về hiệu suất, chi phí và truy cập dữ liệu. Dưới đây là các loại lớp lưu trữ S3 mà AWS cung cấp:
+
+### 1. S3 Standard
+- **Mô tả**: Đây là lớp lưu trữ mặc định của S3, được thiết kế cho dữ liệu thường xuyên truy cập.
+- **Use cases**: Dữ liệu thường xuyên truy cập, các ứng dụng di động và web, phân phối nội dung.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% (11 chín) và tính khả dụng 99.99%.
+
+### 2. S3 Intelligent-Tiering
+- **Mô tả**: Tự động di chuyển dữ liệu giữa hai lớp lưu trữ truy cập thường xuyên và không thường xuyên dựa trên cách sử dụng.
+- **Use cases**: Dữ liệu với mẫu truy cập không thể đoán trước.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% và tính khả dụng 99.9%.
+
+### 3. S3 Standard-IA (Infrequent Access)
+- **Mô tả**: Được thiết kế cho dữ liệu ít truy cập nhưng vẫn yêu cầu truy cập nhanh khi cần.
+- **Use cases**: Sao lưu dài hạn, lưu trữ dữ liệu thường không truy cập nhưng vẫn cần truy cập nhanh.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% và tính khả dụng 99.9%.
+
+### 4. S3 One Zone-IA
+- **Mô tả**: Lưu trữ dữ liệu ít truy cập nhưng chỉ trong một vùng sẵn có duy nhất. Thấp hơn về chi phí so với S3 Standard-IA.
+- **Use cases**: Dữ liệu có thể tái tạo dễ dàng hoặc dữ liệu không quan trọng cần truy cập không thường xuyên.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% và tính khả dụng 99.5%.
+
+### 5. S3 Glacier
+- **Mô tả**: Lưu trữ lạnh, chi phí thấp cho dữ liệu ít truy cập với thời gian truy cập từ vài phút đến vài giờ.
+- **Use cases**: Lưu trữ dữ liệu lâu dài, sao lưu dữ liệu cũ, dữ liệu tuân thủ pháp lý.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% và tính khả dụng 99.99%.
+
+### 6. S3 Glacier Deep Archive
+- **Mô tả**: Lớp lưu trữ chi phí thấp nhất, dành cho dữ liệu hiếm khi truy cập, với thời gian truy cập từ 12 đến 48 giờ.
+- **Use cases**: Lưu trữ dữ liệu rất lâu dài, tuân thủ pháp lý, dữ liệu lưu trữ không cần truy cập nhanh.
+- **Độ bền và tính khả dụng**: Độ bền 99.999999999% và tính khả dụng 99.99%.
+
+### 7. S3 Outposts
+- **Mô tả**: Dịch vụ S3 được chạy trên cơ sở hạ tầng của khách hàng thông qua AWS Outposts để lưu trữ dữ liệu tại chỗ với cùng các API và tính năng như trong vùng AWS.
+- **Use cases**: Ứng dụng yêu cầu lưu trữ cục bộ với sự tích hợp và quản lý của S3.
+- **Độ bền và tính khả dụng**: Phụ thuộc vào cấu hình của AWS Outposts.
+
+### Tóm tắt
+
+| Loại Lưu Trữ             | Use cases                                       | Độ bền                    | Tính khả dụng          | Thời gian truy cập      |
+|--------------------------|-------------------------------------------------|--------------------------|------------------------|-------------------------|
+| **S3 Standard**          | Dữ liệu thường xuyên truy cập                   | 99.999999999%            | 99.99%                 | Gần như ngay lập tức    |
+| **S3 Intelligent-Tiering**| Dữ liệu không thể đoán trước mẫu truy cập      | 99.999999999%            | 99.9%                  | Gần như ngay lập tức    |
+| **S3 Standard-IA**       | Dữ liệu ít truy cập                             | 99.999999999%            | 99.9%                  | Gần như ngay lập tức    |
+| **S3 One Zone-IA**       | Dữ liệu có thể tái tạo dễ dàng                 | 99.999999999%            | 99.5%                  | Gần như ngay lập tức    |
+| **S3 Glacier**           | Lưu trữ lâu dài với truy cập ít                 | 99.999999999%            | 99.99%                 | Vài phút đến vài giờ    |
+| **S3 Glacier Deep Archive**| Lưu trữ rất lâu dài với truy cập hiếm hoi    | 99.999999999%            | 99.99%                 | 12 đến 48 giờ           |
+| **S3 Outposts**          | Lưu trữ cục bộ với tích hợp AWS                 | Phụ thuộc vào Outposts   | Phụ thuộc vào Outposts | Gần như ngay lập tức    |
+
+Lựa chọn lớp lưu trữ nào phụ thuộc vào yêu cầu cụ thể của bạn về tần suất truy cập, chi phí và độ bền dữ liệu.
