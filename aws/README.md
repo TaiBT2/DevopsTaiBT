@@ -143,3 +143,74 @@ AWS cung cấp nhiều loại dịch vụ lưu trữ (storage) khác nhau để 
 
 AWS cung cấp nhiều loại dịch vụ lưu trữ khác nhau để phù hợp với nhu cầu đa dạng của người dùng, từ lưu trữ đối tượng và khối đến lưu trữ file và hybrid cloud. Mỗi loại dịch vụ có những tính năng và lợi ích riêng, giúp bạn lựa chọn giải pháp lưu trữ phù hợp nhất cho ứng dụng và dữ liệu của mình.
 
+## Phân biệt các loại storage
+Dưới đây là phân biệt giữa các loại lưu trữ khối (block storage), lưu trữ tệp (file storage), và lưu trữ đối tượng (object storage), cùng với các ví dụ thực tế:
+
+### Block Storage
+
+**Mô tả**:
+- **Lưu trữ khối** là loại lưu trữ cấp thấp nhất, dữ liệu được lưu trữ trong các khối (blocks). Mỗi khối có một địa chỉ duy nhất, nhưng không chứa metadata cao hơn như trong lưu trữ đối tượng.
+- Các khối này có thể được định dạng với một hệ thống file và gắn vào một hệ thống như một ổ đĩa cứng.
+
+**Use cases**:
+- Cơ sở dữ liệu.
+- Hệ điều hành và ứng dụng cần hiệu suất cao.
+- Lưu trữ thường xuyên truy cập với yêu cầu IOPS (Input/Output Operations Per Second) cao.
+
+**Ví dụ thực tế**:
+- **Amazon EBS (Elastic Block Store)**: Dịch vụ lưu trữ khối trên AWS, được sử dụng phổ biến để lưu trữ dữ liệu của các instance EC2.
+
+### File Storage
+
+**Mô tả**:
+- **Lưu trữ tệp** lưu trữ dữ liệu dưới dạng các tệp trong một hệ thống file, và dữ liệu có thể được truy cập qua các giao thức như NFS (Network File System) hoặc SMB (Server Message Block).
+- Dễ dàng chia sẻ dữ liệu giữa nhiều máy chủ và người dùng.
+
+**Use cases**:
+- Chia sẻ file giữa các máy chủ.
+- Lưu trữ home directories cho người dùng.
+- Ứng dụng cần truy cập tệp đồng thời từ nhiều nguồn.
+
+**Ví dụ thực tế**:
+- **Amazon EFS (Elastic File System)**: Hệ thống file phân tán và mở rộng tự động của AWS, hỗ trợ giao thức NFS.
+- **Amazon FSx**: Dịch vụ lưu trữ tệp được quản lý, có hai biến thể: FSx for Windows File Server và FSx for Lustre.
+
+### Object Storage
+
+**Mô tả**:
+- **Lưu trữ đối tượng** lưu trữ dữ liệu dưới dạng các đối tượng. Mỗi đối tượng bao gồm dữ liệu, metadata, và một định danh duy nhất (unique identifier).
+- Không có cấu trúc thư mục như file storage, thay vào đó dữ liệu được tổ chức trong các buckets.
+
+**Use cases**:
+- Lưu trữ và phân phối nội dung đa phương tiện.
+- Sao lưu và lưu trữ dài hạn.
+- Lưu trữ dữ liệu lớn cho phân tích và máy học.
+
+**Ví dụ thực tế**:
+- **Amazon S3 (Simple Storage Service)**: Dịch vụ lưu trữ đối tượng trên AWS, được thiết kế để cung cấp độ bền và khả năng mở rộng cao.
+- **Amazon S3 Glacier**: Lớp lưu trữ chi phí thấp cho lưu trữ dữ liệu dài hạn và ít truy cập.
+
+### So Sánh Tóm Tắt
+
+| Tiêu Chí         | Block Storage                         | File Storage                            | Object Storage                                |
+|------------------|---------------------------------------|-----------------------------------------|-----------------------------------------------|
+| Cấu trúc         | Khối                                  | Tệp                                      | Đối tượng (objects)                           |
+| Truy cập         | Qua hệ điều hành, được gắn như ổ đĩa  | Qua giao thức file (NFS, SMB)           | Qua API HTTP (RESTful)                        |
+| Use Cases        | Cơ sở dữ liệu, hệ điều hành           | Chia sẻ tệp, home directories            | Lưu trữ đa phương tiện, sao lưu, dữ liệu lớn  |
+| Tính năng        | IOPS cao, định dạng hệ thống file     | Chia sẻ dữ liệu, truy cập đồng thời      | Metadata phong phú, khả năng mở rộng cao      |
+| Ví dụ AWS        | Amazon EBS                            | Amazon EFS, Amazon FSx                  | Amazon S3, Amazon S3 Glacier                  |
+
+### Ví Dụ Thực Tế
+
+1. **Block Storage**:
+   - **Amazon EBS**: Được sử dụng để lưu trữ dữ liệu của các instance EC2, như dữ liệu cơ sở dữ liệu hoặc tệp hệ điều hành.
+
+2. **File Storage**:
+   - **Amazon EFS**: Được sử dụng để lưu trữ home directories hoặc chia sẻ tệp giữa nhiều máy chủ EC2.
+   - **Amazon FSx for Windows File Server**: Lưu trữ và chia sẻ dữ liệu cho các ứng dụng Windows-based.
+
+3. **Object Storage**:
+   - **Amazon S3**: Lưu trữ và phân phối nội dung web, sao lưu dữ liệu, và lưu trữ dữ liệu lớn để phân tích.
+   - **Amazon S3 Glacier**: Lưu trữ dữ liệu dài hạn như tài liệu lưu trữ và sao lưu lịch sử.
+
+Mỗi loại lưu trữ có những ưu và nhược điểm riêng, phù hợp với các nhu cầu sử dụng khác nhau. Sự lựa chọn giữa chúng phụ thuộc vào yêu cầu cụ thể về hiệu suất, chi phí, và khả năng mở rộng của ứng dụng và dữ liệu.
