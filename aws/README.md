@@ -25,19 +25,67 @@
 - khi tạo 1 GA thì sẽ giúp chúng ta điều hướng traffic đến nhiều server trên nhiều region, 
 - GA sẽ cung cấp 1 DNS và thêm 2 static IP.
 ## Explanation - AWS Global Accelerator vs CloudFront
+AWS Global Accelerator và Amazon CloudFront đều là các dịch vụ của AWS thiết kế để cải thiện hiệu suất và độ tin cậy của ứng dụng web, nhưng chúng phục vụ các mục đích khác nhau và hoạt động theo các cách khác nhau. Dưới đây là sự phân biệt giữa hai dịch vụ này:
 
-• They both use the AWS global network and its edge locations around the world
-• Both services integrate with AWS Shield for DDoS protection.
-• CloudFront
-• Improves performance for both cacheable content (such as images and videos)
-• Dynamic content (such as API acceleration and dynamic site delivery)
-• Content is served at the edge
-• Global Accelerator
-• Improves performance for a wide range of applications over TCP or UDP
-• Proxying packets at the edge to applications running in one or more AWS Regions.
-• Good fit for non-HTTP use cases, such as gaming (UDP), IoT (MQTT), or Voice over IP
-• Good for HTTP use cases that require static IP addresses
-• Good for HTTP use cases that required deterministic, fast regional failover
+### AWS Global Accelerator
+
+#### Mục Đích
+AWS Global Accelerator là một dịch vụ mạng được quản lý giúp cải thiện tính sẵn sàng và hiệu suất của các ứng dụng của bạn bằng cách định tuyến lưu lượng truy cập qua mạng toàn cầu AWS.
+
+#### Hoạt Động
+- **Địa chỉ IP tĩnh**: Global Accelerator cung cấp hai địa chỉ IP tĩnh bất kỳ để đại diện cho ứng dụng của bạn. Người dùng có thể kết nối với địa chỉ IP tĩnh này thay vì phải nhớ các địa chỉ IP thay đổi của ứng dụng.
+- **Anycast**: Sử dụng địa chỉ IP anycast để định tuyến lưu lượng đến các vị trí gần nhất với người dùng cuối dựa trên mạng AWS toàn cầu.
+- **Định tuyến thông minh**: Tự động chọn tuyến đường mạng tối ưu dựa trên độ trễ, tải và các yếu tố khác để cải thiện hiệu suất.
+- **Tính sẵn sàng cao**: Chuyển hướng lưu lượng tới các vùng sẵn có (availability zones) khác khi có sự cố để đảm bảo tính liên tục của dịch vụ.
+
+#### Use Cases
+- Ứng dụng đa vùng (multi-region) cần cải thiện độ tin cậy và hiệu suất.
+- Ứng dụng TCP và UDP yêu cầu định tuyến mạng nhanh chóng và tối ưu.
+- Dịch vụ cần địa chỉ IP tĩnh và khả năng failover tự động giữa các vùng sẵn có.
+
+### Amazon CloudFront
+
+#### Mục Đích
+Amazon CloudFront là một dịch vụ mạng phân phối nội dung (CDN) giúp tăng tốc việc phân phối các trang web tĩnh và động, bao gồm các tệp hình ảnh, video, tài liệu HTML, và các ứng dụng API thông qua các edge locations toàn cầu.
+
+#### Hoạt Động
+- **Edge Locations**: CloudFront có hàng trăm edge locations trên toàn thế giới để đưa nội dung đến gần người dùng cuối nhất.
+- **Caching**: Lưu trữ tạm thời các nội dung phổ biến tại các edge locations để giảm thời gian tải trang và băng thông.
+- **Origin Servers**: CloudFront có thể lấy nội dung từ các máy chủ gốc như Amazon S3, Amazon EC2 hoặc máy chủ bên ngoài.
+- **TLS/SSL**: Cung cấp bảo mật với chứng chỉ SSL/TLS để mã hóa dữ liệu trong quá trình truyền.
+- **Tính năng nâng cao**: Hỗ trợ nén Gzip/Brotli, điều khiển chi tiết truy cập nội dung, tùy chỉnh đáp ứng (Lambda@Edge), v.v.
+
+#### Use Cases
+- Phân phối nội dung tĩnh và động trên toàn cầu với độ trễ thấp.
+- Ứng dụng web cần cải thiện hiệu suất tải trang.
+- Streaming media (video/audio) với chất lượng cao và độ trễ thấp.
+- Bảo mật và kiểm soát truy cập nội dung.
+
+### So Sánh Chi Tiết
+
+| **Tiêu chí**                | **AWS Global Accelerator**                     | **Amazon CloudFront**                                |
+|-----------------------------|------------------------------------------------|-----------------------------------------------------|
+| **Mục đích chính**          | Tăng cường tính sẵn sàng và hiệu suất mạng     | Phân phối nội dung toàn cầu                         |
+| **Địa chỉ IP**              | Cung cấp địa chỉ IP tĩnh                       | Sử dụng domain name (CNAME)                         |
+| **Cách hoạt động**          | Định tuyến thông minh dựa trên anycast         | Caching và phân phối nội dung từ các edge locations |
+| **Loại lưu lượng**          | TCP và UDP                                     | HTTP và HTTPS                                       |
+| **Cải thiện hiệu suất**     | Tối ưu hóa định tuyến trên mạng AWS toàn cầu   | Giảm độ trễ thông qua caching tại các edge          |
+| **Sẵn sàng cao**            | Tự động chuyển hướng giữa các vùng             | Chuyển hướng tới edge location gần nhất             |
+| **Use Cases**               | Ứng dụng đa vùng, địa chỉ IP tĩnh              | Phân phối nội dung web, streaming media             |
+
+### Khi Nào Sử Dụng Cái Nào?
+
+- **AWS Global Accelerator**:
+  - Khi bạn cần tối ưu hóa lưu lượng mạng cho ứng dụng TCP/UDP.
+  - Khi bạn cần địa chỉ IP tĩnh và failover tự động giữa các vùng AWS.
+  - Khi ứng dụng của bạn trải dài trên nhiều vùng địa lý và bạn cần tối ưu hóa đường dẫn mạng.
+
+- **Amazon CloudFront**:
+  - Khi bạn cần phân phối nội dung tĩnh và động trên toàn cầu với hiệu suất cao.
+  - Khi bạn cần caching để giảm tải cho các máy chủ gốc.
+  - Khi bạn cần bảo mật HTTPS và kiểm soát truy cập chi tiết cho nội dung của mình.
+
+Tóm lại, Global Accelerator là dịch vụ mạng định tuyến lưu lượng thông minh với IP tĩnh, trong khi CloudFront là CDN giúp tăng tốc phân phối nội dung web. Lựa chọn giữa hai dịch vụ này phụ thuộc vào yêu cầu cụ thể của ứng dụng và mục đích sử dụng của bạn.
 ## NETWORK FIREWALL
 ## Amazon QuickSight
 -  QuickSight is used to created dashboard from S3, RDS, Redshift, Aurora, Athena, OpenSearch, Timestream
@@ -58,6 +106,8 @@
 
 ## AWS Macie
 - Amazon Macie là một dịch vụ bảo mật và quyền riêng tư của AWS sử dụng machine learning và các kỹ thuật pattern matching để phát hiện và bảo vệ dữ liệu nhạy cảm trong AWS. Macie tự động xác định và phân loại dữ liệu nhạy cảm như thông tin nhận dạng cá nhân (PII), thông tin thẻ tín dụng, dữ liệu sức khỏe, và các loại dữ liệu nhạy cảm khác trong các tài khoản Amazon S3. Macie cung cấp các báo cáo và cảnh báo về các phát hiện bảo mật, giúp bạn nhanh chóng phát hiện và ứng phó với các sự cố bảo mật. Các cảnh báo có thể được tích hợp với Amazon CloudWatch, AWS Security Hub, và các công cụ bảo mật khác.
+- EX:  The stores upload transaction data to the company through SFTP, and the data is processed and analyzed to generate new marketing offers. Some of the files can exceed 200 GB in size. Recently, the company discovered that some of the stores have uploaded files that contain personally identifiable information (PII) that should not have been included. The company wants administrators to be alerted if PII is shared again. The company also wants to automate remediation.
+What should a solutions architect do to meet these requirements with the LEAST development effort?
 ## Amazon Simple Email Service (Amazon SES) 
 - Là dịch vụ gửi và nhận email, xác thực email được gửi từ các tên miền của các bạn, quản lý email bị trả lại (bounce) và phản hồi (complaints)
 ## AWS EventBridge 
