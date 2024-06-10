@@ -1,16 +1,7 @@
-## STORAGE
-- Có 3 loại cloud storage
-    - Object storage: là storage có khả năng mở rộng linh hoạt, lưu trữ mọi loại dữ liệu ( dữ liệu phi cấu trúc, binary, blobs), kích thước lớn.
-    - File storage : lưu file nhiều ứng dụng truy cập, dạng share file, network attached storage.
-    - Block storage máy chủ cần bộ lưu trữ riêng, độ trể thấp
-- S3 : được thiết kế để lưu trữ dung lượng lớn, giá thấp, khả năng mở rộng cao, dữ liệu được mã hoá (mã hoá ở client side và service side)
-    - s3 standard: độ trể thấp, cần truy xuất nhanh, thường xuyên truy xuất dữ liệu
-    - s3 standard-IA: sử dụng không thường xuyên, và khi truy xuất sẽ nhanh, thường dùng là kho dữ liệu sao lưu. Tiết kiệm tiền
-    - s3 onezone IA: như s3 IA nhưng giá thấp hơn, nằm trên 1 zone.
-    - s3 interlligent-tiering: khác xác định được lượng truy xuất, và muốn tiết kiệm giá
-    - AWS GLACIER and Glacer deep: data được đóng băng trong 1 khoảng thời gian. data sẽ được lấy nhanh khi cần, giá rẽ.
-- S3 Transfer Acceleration : truyền tải dữ liệu lên s3 nhanh hơn
-- EBS : Cho dữ liệu ở mức độ truy cập cao, bảo mật dữ liệu, muốn move az thì sẽ tạo snapshot vào move qua az khác
+## S3
+- protect the S3 data from accidental deletion.
+  -  Enable versioning on the S3 bucket.
+  - Enable MFA Delete on the S3 bucket.
 ## RESIZE EBS ZERO DOWTIME
 - check free disk space available: df -h
 - list all block devide: lsblk
@@ -95,7 +86,8 @@ Tóm lại, Global Accelerator là dịch vụ mạng định tuyến lưu lư�
 ## AWS system manager
 - Quản lý các ec2, truy xuất ec2 bảo mật, chỉ cần ec2 có role SSM và có SSM agent.
 ##  Amazon Appflow
-- AWS AppFlow là một dịch vụ tích hợp dữ liệu hoàn toàn quản lý, cho phép bạn truyền dữ liệu một cách an toàn giữa các ứng dụng SaaS (Software as a Service) như Salesforce, ServiceNow, Google Analytics, và các dịch vụ AWS như Amazon S3 và Amazon Redshift.
+- AWS AppFlow là một dịch vụ tích hợp dữ liệu hoàn toàn quản lý, cho phép bạn truyền dữ liệu một cách an toàn giữa các ứng dụng SaaS (Software as a Service) như Salesforce, ServiceNow, Google Analytics, và các dịch vụ AWS như Amazon S3 và Amazon Redshift. Giả sử có 1 SAAS muốn  tranfer data đến s3 thì dùng appflow để tranfer.
+
 ## AWS Direct Connect
 - AWS Direct Connect là một dịch vụ mạng cung cấp kết nối chuyên dụng, riêng tư giữa cơ sở hạ tầng của bạn và Amazon Web Services (AWS).
     1. Các bước sử dụng AWS Direct Connect
@@ -103,16 +95,15 @@ Tóm lại, Global Accelerator là dịch vụ mạng định tuyến lưu lư�
         Thiết lập kết nối vật lý: Thiết lập kết nối vật lý từ trung tâm dữ liệu của bạn đến một trong các địa điểm AWS Direct Connect.
         Cấu hình mạng: Cấu hình các tham số mạng như VLAN, BGP và IP trên thiết bị mạng của bạn để kết nối với AWS.
         Kích hoạt và kiểm tra kết nối: Sau khi thiết lập, kích hoạt và kiểm tra kết nối để đảm bảo nó hoạt động đúng.
+- Ex: A company has an on-premises application that generates a large amount of time-sensitive data that is backed up to Amazon S3. The application has grown and there are user complaints about internet bandwidth limitations. A solutions architect needs to design a long-term solution that allows for both timely backups to Amazon S3 and with minimal impact on internet connectivity for internal users. ==> Establish a new AWS Direct Connect connection and direct backup traffic through this new connection. 
 
 ## AWS Macie
 - Amazon Macie là một dịch vụ bảo mật và quyền riêng tư của AWS sử dụng machine learning và các kỹ thuật pattern matching để phát hiện và bảo vệ dữ liệu nhạy cảm trong AWS. Macie tự động xác định và phân loại dữ liệu nhạy cảm như thông tin nhận dạng cá nhân (PII), thông tin thẻ tín dụng, dữ liệu sức khỏe, và các loại dữ liệu nhạy cảm khác trong các tài khoản Amazon S3. Macie cung cấp các báo cáo và cảnh báo về các phát hiện bảo mật, giúp bạn nhanh chóng phát hiện và ứng phó với các sự cố bảo mật. Các cảnh báo có thể được tích hợp với Amazon CloudWatch, AWS Security Hub, và các công cụ bảo mật khác.
-- EX:  The stores upload transaction data to the company through SFTP, and the data is processed and analyzed to generate new marketing offers. Some of the files can exceed 200 GB in size. Recently, the company discovered that some of the stores have uploaded files that contain personally identifiable information (PII) that should not have been included. The company wants administrators to be alerted if PII is shared again. The company also wants to automate remediation.
-What should a solutions architect do to meet these requirements with the LEAST development effort?
+- EX:  The stores upload transaction data to the company through SFTP, and the data is processed and analyzed to generate new marketing offers. Some of the files can exceed 200 GB in size. Recently, the company discovered that some of the stores have uploaded files that contain personally identifiable information (PII) that should not have been included. The company wants administrators to be alerted if PII is shared again. The company also wants to automate remediation. What should a solutions architect do to meet these requirements with the LEAST development effort? ==> 
 ## Amazon Simple Email Service (Amazon SES) 
 - Là dịch vụ gửi và nhận email, xác thực email được gửi từ các tên miền của các bạn, quản lý email bị trả lại (bounce) và phản hồi (complaints)
 ## AWS EventBridge 
-- là dịch vụ quản lý sự
- kiện được quản lý bởi aws, phát hiện và xử lý sự kiện từ nhiều nguồn khác nhau như aws services, ứng dụng riêng, SAAS. Giúp kết nối ứng dụng với rất nhiều dịch vụ aws, cho phép để định nghĩa các quy tắc để lọc và định tuyện các sự kiện đến các mục tiêu như aws lambda, sqs, sns, dịch vụ bên thứ 3.
+- là dịch vụ quản lý sự kiện được quản lý bởi aws, phát hiện và xử lý sự kiện từ nhiều nguồn khác nhau như aws services, ứng dụng riêng, SAAS. Giúp kết nối ứng dụng với rất nhiều dịch vụ aws, cho phép để định nghĩa các quy tắc để lọc và định tuyện các sự kiện đến các mục tiêu như aws lambda, sqs, sns, dịch vụ bên thứ 3.
 ## AWS STORAGE
 AWS cung cấp nhiều loại dịch vụ lưu trữ (storage) khác nhau để đáp ứng các nhu cầu đa dạng của người dùng. Dưới đây là phân loại và mô tả chi tiết về các loại lưu trữ chính trong AWS:
 

@@ -14,4 +14,6 @@
 - The company wants to extract the shipping statistics: Công ty muốn trích xuất số liệu thống kê vận chuyển.
   - extract: trích xuất
   - statistics: Số liệu thống kê
+- A company is developing an application that provides order shipping statistics for retrieval by a REST API : Công ty muốn phát triển ứng dụng để cung cấp số liệu thống kê vận chuyển đơn hàng được truy xuất bởi rest api.
+  - retrieval: truy xuất
 - 

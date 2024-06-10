@@ -1,4 +1,5 @@
 helm upgrade -i fluent-bit fluent/fluent-bit -n observability --create-namespace -f fluent-bit.yaml
+helm install my-release oci://registry-1.docker.io/bitnamicharts/fluent-bit
 ## Elasticsearch
 - Step 1: git clone https://github.com/elastic/helm-charts.git
 - Step 2: edit cd helm-charts/elasticsearch/
