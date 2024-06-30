@@ -210,6 +210,14 @@ https://rudimartinsen.com/2024/01/09/nfs-csi-driver-kubernetes/
 
 
 ```
+- update permisstion nfs server
+```
+nano /etc/exports
+
+sudo exportfs -ra
+sudo systemctl restart nfs-kernel-server
+sudo exportfs -v
+```
 ```
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -338,4 +346,83 @@ ETCDCTL_API=3 etcdctl \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key \
   snapshot save /opt/backup/etcd.db
+```
+## RBAC Kubernetes
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: wap-developer
+  namespace: s23dajinswap-dev
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wap-developer-token
+  namespace: s23dajinswap-dev
+  annotations:
+    kubernetes.io/service-account.name: wap-developer
+type: kubernetes.io/service-account-token
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: banca-clusterrole
+  namespace: s23dajinswap-dev
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "get", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get","list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  verbs: ["update"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get","list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: s23dajinswap-dev
+  name: wap-dev
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: banca-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: wap-developer
+  namespace: s23dajinswap-dev
+roleRef:
+  kind: ClusterRole
+  name: banca-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: jane # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+
 ```
