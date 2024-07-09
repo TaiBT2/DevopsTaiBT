@@ -1,152 +1,243 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nexus-ingress
-  namespace: jenkins
-  annotations:
-    cert-manager.io/issuer: letsencrypt-prod
-    kubernetes.io/ingress.class: nginx
-spec:
-  tls:
-    - hosts:
-        - jenkinsg1.rikkei.org
-      secretName: jenkins-tls
-  rules:
-    - host: jenkinsg1.rikkei.org
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: jenkins
-                port:
-                  number: 80
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-prod
-  namespace: cert-manager
-spec:
-  acme:
-    # The ACME server URL
-    server: https://acme-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
-    email: thanhtai18021994@gmail.com
-    # Name of a secret used to store the ACME account private key
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    # Enable the HTTP-01 challenge provider
-    solvers:
-    - http01:
-        ingress:
-          class: nginx
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
- name: letsencrypt-staging
- namespace: cert-manager
-spec:
- acme:
-   # The ACME server URL
-   server: https://acme-staging-v02.api.letsencrypt.org/directory
-   # Email address used for ACME registration
-   email: thanhtai18021994@gmail.com
-   # Name of a secret used to store the ACME account private key
-   privateKeySecretRef:
-     name: letsencrypt-staging
-   # Enable the HTTP-01 challenge provider
-   solvers:
-   - http01:
-       ingress:
-         class:  nginx
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: kubecert
-  namespace: jenkins
-spec:
-  secretName: letsencrypt-prod
-  issuerRef:
-    name: letsencrypt-prod
-    kind: ClusterIssuer
-  commonName: testdg1.rikkei.org
-  dnsNames:
-  - testdg1.rikkei.org       
----
-apiVersion: v1
-kind: Ingrees
-metadata:
-  name: nexus-ingress
-  namespace: jenkins
-spec:
-  tls:
-      - hosts:
-          - testdg1.rikkei.org
-        secretName: tls-secret
-  rules:
-    - host: testdg1.rikkei.org
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: nexus3
-                port:
-                  number: 8081   
----
-  apiVersion: networking.k8s.io/v1
-  kind: Ingress
-  metadata:
-    name: nexus-ingress
-    namespace: jenkins
-  spec:
-    ingressClassName: nginx
-    rules:
-      - host: testdg1.rikkei.org
-        http:
-          paths:
-            - backend:
-                service:
-                  name: nexus3
-                  port:
-                    number: 8081
-              path: /
-              pathType: Prefix
-    # This section is only required if TLS is to be enabled for the Ingress
-    tls:
-        - hosts:
-            - jenkinsdg1.rikkei.org
-          secretName: tls-secret
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: demo-ingress
-  namespace: jenkins
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"
-spec:
-  tls:
-    - hosts:
-        - smpfeclient.vietnamfmc.site
-      secretName: smpfeclient.vietnamfmc.site
-  rules:
-    - host: smpfeclient.vietnamfmc.site
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: jenkins
-                port:
-                  number: 80
----
-                  
-            
+affinity: {}
+annotations: {}
+args:
+- --workdir=/fluent-bit/etc
+- --config=/fluent-bit/etc/conf/fluent-bit.conf
+autoscaling:
+  behavior: {}
+  customRules: []
+  enabled: false
+  maxReplicas: 3
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 75
+  vpa:
+    annotations: {}
+    controlledResources: []
+    enabled: false
+    maxAllowed: {}
+    minAllowed: {}
+    updatePolicy:
+      updateMode: Auto
+command:
+- /fluent-bit/bin/fluent-bit
+config:
+  customParsers: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  extraFiles: {}
+  filters: |
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Keep_Log Off
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+  inputs: "[SERVICE]\n    Daemon Off\n    Flush 1\n    Log_Level info\n    Parsers_File
+    parsers.conf\n    Parsers_File custom_parsers.conf\n    HTTP_Server On\n    HTTP_Listen
+    0.0.0.0\n    HTTP_Port 2020\n    Health_Check On\n    HC_Errors_Count 4\n    HC_Retry_Failure_Count
+    4\n    HC_Period 30\n\n[INPUT]\n    Name              tail\n    Tag               kube.*\n
+    \   Path              /var/log/containers/*.log\n    multiline.parser docker,
+    cri\n    DB                /var/log/flb_kube.db\n    Mem_Buf_Limit 100MB\n    Skip_Long_Lines
+    On\n    Ignore_Older 7d\n    Exclude_Path *.gz,*.zip,*.tar\n    Read_from_Head
+    False\n    Rotate_Wait 10\n    Skip_Empty_Lines on\n    Refresh_Interval  10\n
+    \   Buffer_Chunk_Size 32KB\n    Buffer_Max_Size   32KB\n\n[FILTER]\n    Name                kubernetes\n
+    \   Match               kube.*\n    Kube_URL            https://kubernetes.default.svc:443\n
+    \   Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n
+    \   Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token\n
+    \   Kube_Tag_Prefix     kube.var.log.containers.\n    Merge_Log           Off\n
+    \   Merge_Log_Key       log_processed\n    Merge_Log_Trim      On\n    K8S-Logging.Parser
+    \ On\n    K8S-Logging.Exclude On\n    Keep_Log            On\n    Labels              Off\n
+    \   Annotations         Off      \n    Buffer_Size         0  \n[Filter]\n    Name
+    \   nest\n    Match    kube.*\n    Operation    lift\n    Nested_under    kubernetes\n
+    \   Add_prefix    kubernetes_\n[Filter]\n    Name    modify\n    Match    kube.*\n
+    \   Remove    stream\n    Remove    kubernetes_pod_id\n    Remove    kubernetes_host\n
+    \   Remove    kubernetes_container_hash\n    Remove    kubernetes_docker_id\n
+    \   Remove    kubernetes_container_image\n[Filter]\n    Name    nest\n    Match
+    \   kube.*\n    Operation    nest\n    Wildcard    kubernetes_*\n    Nest_under
+    \   kubernetes\n    Remove_prefix    kubernetes_\n\n[OUTPUT]\n    Name            es\n
+    \   Match           kube.*\n    Host            10.20.23.196\n    Port            9200\n
+    \   HTTP_User       elastic\n    HTTP_Passwd     5D77+f4ca8k7g5Niv0GJ\n    Time_Key
+    \       @timestamp\n    Logstash_Format           On\n    Logstash_Prefix           pod_name\n
+    \   Logstash_Prefix_Separator -\n    Logstash_DateFormat       %Y.%m.%d\n    Replace_Dots
+    \   On\n    Trace_Error On\n    Suppress_Type_Name On\n    Retry_Limit     False\n
+    \   Type  _doc\n    Buffer_Size 512M\n    tls On\n    tls.verify Off\n    tls.ca_file
+    /etc/cert/http_ca.crt\n"
+  outputs: |
+    [OUTPUT]
+        Name es
+        Match kube.*
+        Host elasticsearch-master
+        Logstash_Format On
+        Retry_Limit False
+
+    [OUTPUT]
+        Name es
+        Match host.*
+        Host elasticsearch-master
+        Logstash_Format On
+        Logstash_Prefix node
+        Retry_Limit False
+  service: |
+    [SERVICE]
+        Daemon Off
+        Flush {{ .Values.flush }}
+        Log_Level {{ .Values.logLevel }}
+        Parsers_File /fluent-bit/etc/parsers.conf
+        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port {{ .Values.metricsPort }}
+        Health_Check On
+  upstream: {}
+daemonSetVolumeMounts:
+- mountPath: /var/log
+  name: varlog
+- mountPath: /var/lib/docker/containers
+  name: varlibdockercontainers
+  readOnly: true
+- mountPath: /etc/machine-id
+  name: etcmachineid
+  readOnly: true
+- mountPath: /etc/cert
+  name: cert
+  readOnly: true
+daemonSetVolumes:
+- hostPath:
+    path: /var/log
+  name: varlog
+- hostPath:
+    path: /var/log
+  name: varlog
+- hostPath:
+    path: /var/lib/docker/containers
+  name: varlibdockercontainers
+- hostPath:
+    path: /etc/machine-id
+    type: File
+  name: etcmachineid
+- name: cert
+  persistentVolumeClaim:
+    claimName: fluentbit-agent-pv
+dashboards:
+  annotations: {}
+  enabled: false
+  labelKey: grafana_dashboard
+  labelValue: 1
+  namespace: ""
+dnsConfig: {}
+dnsPolicy: ClusterFirst
+env: []
+envFrom: []
+envWithTpl: []
+existingConfigMap: ""
+extraContainers: []
+extraPorts: []
+extraVolumeMounts: []
+extraVolumes: []
+flush: 1
+fullnameOverride: ""
+hostAliases: []
+hostNetwork: false
+hotReload:
+  enabled: false
+  image:
+    digest: null
+    pullPolicy: IfNotPresent
+    repository: ghcr.io/jimmidyson/configmap-reload
+    tag: v0.11.1
+  resources: {}
+image:
+  digest: null
+  pullPolicy: IfNotPresent
+  repository: cr.fluentbit.io/fluent/fluent-bit
+  tag: null
+imagePullSecrets: []
+ingress:
+  annotations: {}
+  enabled: false
+  extraHosts: []
+  hosts: []
+  ingressClassName: ""
+  tls: []
+initContainers: []
+kind: DaemonSet
+labels: {}
+lifecycle: {}
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+logLevel: info
+luaScripts: {}
+metricsPort: 2020
+minReadySeconds: null
+nameOverride: ""
+networkPolicy:
+  enabled: false
+nodeSelector: {}
+openShift:
+  enabled: false
+  securityContextConstraints:
+    annotations: {}
+    create: true
+    existingName: ""
+    name: ""
+podAnnotations: {}
+podDisruptionBudget:
+  annotations: {}
+  enabled: false
+  maxUnavailable: 30%
+podLabels: {}
+podSecurityContext: {}
+podSecurityPolicy:
+  annotations: {}
+  create: false
+priorityClassName: ""
+prometheusRule:
+  enabled: false
+rbac:
+  create: true
+  eventsAccess: false
+  nodeAccess: false
+readinessProbe:
+  httpGet:
+    path: /api/v1/health
+    port: http
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  annotations: {}
+  externalIPs: []
+  internalTrafficPolicy: null
+  labels: {}
+  loadBalancerClass: null
+  loadBalancerSourceRanges: []
+  port: 2020
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  create: true
+  name: null
+serviceMonitor:
+  additionalEndpoints: []
+  enabled: false
+terminationGracePeriodSeconds: null
+testFramework:
+  enabled: true
+  image:
+    digest: null
+    pullPolicy: Always
+    repository: busybox
+    tag: latest
+  namespace: null
+tolerations: []
+updateStrategy: {}
+volumeMounts:
+- mountPath: /fluent-bit/etc/conf
+  name: config
