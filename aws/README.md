@@ -306,3 +306,35 @@ Amazon S3 (Simple Storage Service) cung cấp các lớp lưu trữ khác nhau �
 | **S3 Outposts**          | Lưu trữ cục bộ với tích hợp AWS                 | Phụ thuộc vào Outposts   | Phụ thuộc vào Outposts | Gần như ngay lập tức    |
 
 Lựa chọn lớp lưu trữ nào phụ thuộc vào yêu cầu cụ thể của bạn về tần suất truy cập, chi phí và độ bền dữ liệu.
+## CloudWatch and Cloud Trial
+CloudWatch và CloudTrail là hai dịch vụ quản lý và giám sát quan trọng trong AWS. Dưới đây là thông tin chi tiết về cả hai:
+
+### AWS CloudWatch
+
+**Amazon CloudWatch** là một dịch vụ giám sát và quản lý được sử dụng để theo dõi các ứng dụng, tài nguyên hệ thống, và dịch vụ AWS trong môi trường đám mây của bạn. 
+
+**Các tính năng chính:**
+- **Giám sát tài nguyên:** Thu thập và theo dõi các số liệu (metrics) từ các dịch vụ AWS như EC2, RDS, DynamoDB, và các ứng dụng chạy trên AWS.
+- **Log Management:** Thu thập và theo dõi các log từ các tài nguyên AWS và ứng dụng của bạn, sau đó bạn có thể tìm kiếm và phân tích chúng.
+- **Alarms:** Thiết lập cảnh báo dựa trên các số liệu mà bạn đang giám sát để nhận thông báo khi có vấn đề xảy ra hoặc khi cần hành động.
+- **Dashboards:** Tạo các bảng điều khiển tùy chỉnh để hiển thị dữ liệu số liệu và log theo thời gian thực.
+
+**Ví dụ sử dụng:**
+- Giám sát tình trạng hoạt động của các instance EC2, bao gồm CPU, Disk I/O, Network I/O.
+- Thiết lập cảnh báo để thông báo khi mức sử dụng CPU vượt ngưỡng nhất định.
+- Theo dõi các log từ ứng dụng của bạn để phát hiện và giải quyết các vấn đề kịp thời.
+
+### AWS CloudTrail
+
+**AWS CloudTrail** là một dịch vụ giúp bạn giám sát và ghi lại mọi hoạt động API được thực hiện trong tài khoản AWS của bạn. CloudTrail cung cấp lịch sử về các hành động này, cho phép bạn kiểm tra, phân tích và giám sát mọi thay đổi và hoạt động trong tài khoản của mình.
+
+**Các tính năng chính:**
+- **Logging API Calls:** Ghi lại tất cả các cuộc gọi API (bao gồm qua AWS Management Console, AWS SDKs, command line tools, và các dịch vụ AWS khác).
+- **Tra cứu sự kiện:** Bạn có thể tìm kiếm và lọc các sự kiện cụ thể để tìm hiểu ai đã làm gì trong tài khoản của bạn.
+- **S3 Buckets:** CloudTrail logs có thể được gửi đến Amazon S3 để lưu trữ dài hạn và phân tích sâu hơn.
+- **Security and Compliance:** Giúp bạn tuân thủ các yêu cầu pháp lý và kiểm tra bảo mật bằng cách cung cấp một bản ghi đầy đủ về tất cả các hoạt động API.
+
+**Ví dụ sử dụng:**
+- Kiểm tra ai đã thực hiện thay đổi đối với một nhóm bảo mật hoặc thiết lập IAM trong tài khoản của bạn.
+- Giám sát các hoạt động bất thường hoặc trái phép.
+- Cung cấp thông tin chi tiết cho các cuộc kiểm toán và điều tra bảo mật.
