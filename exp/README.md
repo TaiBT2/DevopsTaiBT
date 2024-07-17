@@ -1,5 +1,4 @@
 ## NETWORK
-Tất nhiên! Đây là một kịch bản về vấn đề liên quan đến mạng (network) mà bạn có thể đối mặt và cách giải quyết:
 
 ---
 

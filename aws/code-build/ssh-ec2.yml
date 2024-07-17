@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo Installing AWS CLI
+      - pip install awscli
+  pre_build:
+    commands:
+      - echo Retrieving private key from Secrets Manager
+      - export SECRET_NAME=my-ec2-private-key
+      - export REGION=us-west-2 # Change this to your region
+      - export PRIVATE_KEY=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --region $REGION --query SecretString --output text)
+      - echo "$PRIVATE_KEY" > private_key.pem
+      - chmod 400 private_key.pem
+  build:
+    commands:
+      - echo Executing SSH command on EC2 instance
+      - export SSH_USER=ec2-user # Change this to your instance's user
+      - export EC2_IP=your.ec2.ip.address # Change this to your instance's IP
+      - ssh -o StrictHostKeyChecking=no -i private_key.pem $SSH_USER@$EC2_IP 'bash -s' < deploy_script.sh
+  post_build:
+    commands:
+      - echo Cleaning up
+      - rm -f private_key.pem
+
+artifacts:
+  files:
+    - '**/*'
