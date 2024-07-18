@@ -162,3 +162,25 @@ Trước tiên, bạn cần một Kubernetes cluster đã được triển khai 
 ### Tóm lại
 
 Việc triển khai Service Mesh như Istio vào một môi trường microservices trên Kubernetes cung cấp một lớp giải pháp mạnh mẽ cho việc quản lý và kiểm soát lưu lượng mạng, bảo mật và giám sát hiệu suất. Quá trình triển khai bao gồm cài đặt Istio, định cấu hình và kiểm tra tích hợp để đảm bảo hệ thống hoạt động ổn định và hiệu quả.
+## TEST PERFORMANCE
+Để xác định số lượng request mà ứng dụng của bạn có thể xử lý tại một thời điểm, bạn cần thực hiện một số bước kiểm tra và tối ưu hóa. Dưới đây là các bước cơ bản bạn có thể thực hiện:
+
+1. **Kiểm tra tài nguyên hệ thống**: Đảm bảo rằng bạn có đủ tài nguyên phần cứng như CPU, RAM và băng thông mạng. Bạn có thể sử dụng các công cụ như `top`, `htop` trên Linux hoặc Task Manager trên Windows để kiểm tra việc sử dụng tài nguyên.
+
+2. **Sử dụng công cụ đo lường hiệu suất**: Các công cụ như Apache JMeter, Gatling hoặc Locust có thể giúp bạn tạo tải và đo lường hiệu suất của ứng dụng. Bạn có thể cấu hình để gửi một số lượng lớn request đến ứng dụng và theo dõi cách mà ứng dụng xử lý chúng.
+
+3. **Kiểm tra giới hạn của ứng dụng**:
+   - **Ứng dụng web**: Đối với các ứng dụng web, bạn có thể kiểm tra giới hạn số lượng kết nối mà máy chủ web (như Nginx, Apache) có thể xử lý. Bạn cũng cần kiểm tra cấu hình của ứng dụng web và cơ sở dữ liệu.
+   - **Microservices**: Đối với các ứng dụng microservices, bạn cần kiểm tra giới hạn của mỗi service và cách chúng giao tiếp với nhau.
+
+4. **Đo lường thời gian phản hồi**: Theo dõi thời gian phản hồi (response time) của ứng dụng khi xử lý một số lượng lớn request. Nếu thời gian phản hồi tăng đáng kể khi số lượng request tăng, điều đó cho thấy ứng dụng của bạn có thể đang bị quá tải.
+
+5. **Tối ưu hóa mã nguồn**: Đảm bảo rằng mã nguồn của bạn được tối ưu hóa cho hiệu suất. Điều này bao gồm việc sử dụng các thuật toán hiệu quả, giảm thiểu các tác vụ không cần thiết và sử dụng caching khi cần thiết.
+
+6. **Sử dụng cân bằng tải (Load Balancer)**: Nếu bạn có nhiều máy chủ, sử dụng load balancer để phân phối tải đều giữa các máy chủ. Các dịch vụ như AWS Elastic Load Balancing (ELB) có thể giúp bạn thực hiện điều này.
+
+7. **Giám sát và báo cáo**: Sử dụng các công cụ giám sát như Prometheus, Grafana để theo dõi hiệu suất của hệ thống theo thời gian thực. Bạn có thể thiết lập các cảnh báo để nhận thông báo khi hệ thống bị quá tải.
+
+8. **Kiểm tra định kỳ**: Thực hiện các bài kiểm tra hiệu suất định kỳ để đảm bảo rằng hệ thống của bạn vẫn đáp ứng được yêu cầu khi tải tăng.
+
+Bằng cách thực hiện các bước trên, bạn có thể xác định được số lượng request mà ứng dụng của bạn có thể xử lý tại một thời điểm và thực hiện các biện pháp cần thiết để tối ưu hóa hiệu suất của ứng dụng.

@@ -324,3 +324,4 @@ Nếu bạn muốn tự động tăng giảm số lượng pod dựa trên metri
 1. **Cài đặt Prometheus và Prometheus Adapter**: Thu thập và chuyển đổi CloudWatch metrics thành Kubernetes custom metrics.
 2. **Cấu hình Prometheus để lấy metrics từ CloudWatch**: Sử dụng CloudWatch Exporter để thu thập metrics từ AWS CloudWatch.
 3. **Cấu hình HPA để sử dụng custom metrics**: Thiết lập HPA để sử dụng custom metrics từ Prometheus Adapter.
+## 
