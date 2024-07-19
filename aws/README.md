@@ -338,3 +338,243 @@ CloudWatch và CloudTrail là hai dịch vụ quản lý và giám sát quan tr�
 - Kiểm tra ai đã thực hiện thay đổi đối với một nhóm bảo mật hoặc thiết lập IAM trong tài khoản của bạn.
 - Giám sát các hoạt động bất thường hoặc trái phép.
 - Cung cấp thông tin chi tiết cho các cuộc kiểm toán và điều tra bảo mật.
+## AWS Organization
+### Ví dụ Quản Lý Phức Tạp Hơn với AWS Organizations
+
+Để quản lý phức tạp hơn, bạn có thể sử dụng các tính năng nâng cao của AWS Organizations như kết hợp nhiều SCP, sử dụng Tag Policies, và quản lý quyền truy cập phức tạp cho các môi trường khác nhau. Dưới đây là một số ví dụ chi tiết:
+
+#### Ví dụ 1: Quản lý môi trường đa lớp với SCP và Tag Policies
+
+1. **Cấu trúc tổ chức:**
+   - Tạo các OU: **Development**, **Testing**, **Production**, **Security**, **Finance**.
+
+2. **Chính sách kiểm soát dịch vụ (SCP) cho các môi trường:**
+   - SCP cho OU **Development**: Cho phép sử dụng tất cả các dịch vụ nhưng giới hạn quyền tạo các tài nguyên tốn kém.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": "*",
+           "Resource": "*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": [
+             "ec2:RunInstances",
+             "rds:CreateDBInstance"
+           ],
+           "Resource": "*",
+           "Condition": {
+             "StringEquals": {
+               "ec2:InstanceType": ["t2.micro", "t2.small"]
+             }
+           }
+         }
+       ]
+     }
+     ```
+
+   - SCP cho OU **Testing**: Chỉ cho phép truy cập vào các dịch vụ EC2, S3, và RDS.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": [
+             "ec2:*",
+             "s3:*",
+             "rds:*"
+           ],
+           "Resource": "*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+   - SCP cho OU **Production**: Giới hạn quyền truy cập vào tài nguyên và dịch vụ dựa trên các tag cụ thể.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": "*",
+           "Resource": "*",
+           "Condition": {
+             "StringEquals": {
+               "aws:RequestTag/Environment": "Production"
+             }
+           }
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+3. **Tag Policies:**
+   - Thiết lập các Tag Policies để đảm bảo rằng tất cả các tài nguyên trong môi trường Production được gán tag `Environment: Production`.
+
+4. **Quản lý quyền hạn cho Security và Finance:**
+   - SCP cho OU **Security**: Chỉ cho phép truy cập vào các dịch vụ bảo mật như IAM, GuardDuty.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": [
+             "iam:*",
+             "guardduty:*",
+             "cloudtrail:*",
+             "config:*"
+           ],
+           "Resource": "*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+   - SCP cho OU **Finance**: Chỉ cho phép truy cập vào các dịch vụ liên quan đến quản lý chi phí như Billing, Cost Explorer.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": [
+             "aws-portal:*",
+             "ce:*",
+             "cur:*"
+           ],
+           "Resource": "*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+#### Ví dụ 2: Quản lý tài nguyên và quyền truy cập phức tạp cho nhiều dự án
+
+1. **Cấu trúc tổ chức:**
+   - Tạo các OU: **ProjectA**, **ProjectB**, **SharedServices**.
+
+2. **Quản lý tài nguyên cho các dự án khác nhau:**
+   - SCP cho OU **ProjectA**: Giới hạn truy cập vào các dịch vụ và tài nguyên thuộc ProjectA.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": "*",
+           "Resource": "arn:aws:*:*:projectA:*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+   - SCP cho OU **ProjectB**: Tương tự, giới hạn truy cập vào các dịch vụ và tài nguyên thuộc ProjectB.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": "*",
+           "Resource": "arn:aws:*:*:projectB:*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+3. **Quản lý quyền truy cập cho SharedServices:**
+   - SCP cho OU **SharedServices**: Cho phép truy cập vào các dịch vụ và tài nguyên chung mà cả ProjectA và ProjectB cần sử dụng.
+     ```json
+     {
+       "Version": "2012-10-17",
+       "Statement": [
+         {
+           "Effect": "Allow",
+           "Action": [
+             "s3:*",
+             "cloudwatch:*",
+             "vpc:*"
+           ],
+           "Resource": "*"
+         },
+         {
+           "Effect": "Deny",
+           "Action": "*",
+           "Resource": "*"
+         }
+       ]
+     }
+     ```
+
+4. **Thiết lập phân quyền nâng cao:**
+   - Tạo IAM Roles cho từng dự án và gán các chính sách phù hợp để kiểm soát chi tiết quyền truy cập của từng người dùng và nhóm.
+
+5. **Sử dụng Tag Policies và SCP nâng cao:**
+   - Kết hợp Tag Policies để quản lý và kiểm soát tài nguyên dựa trên các tag như `Project: ProjectA` hoặc `Project: ProjectB`.
+   - Sử dụng các SCP phức tạp hơn để kiểm soát chi tiết hơn dựa trên các tag này.
+
+Bằng cách sử dụng các tính năng nâng cao của AWS Organizations, bạn có thể tạo ra một môi trường quản lý tài nguyên và quyền truy cập rất phức tạp, nhưng vẫn đảm bảo tính bảo mật và hiệu quả trong việc sử dụng tài nguyên AWS. Nếu bạn có bất kỳ câu hỏi cụ thể nào hoặc cần hỗ trợ thêm, hãy cho tôi biết!
+## AWS SECURITY
+AWS cung cấp một loạt các dịch vụ bảo mật để giúp bảo vệ cơ sở hạ tầng, ứng dụng, và dữ liệu của bạn. Dưới đây là một số dịch vụ bảo mật nổi bật của AWS:
+
+1. **AWS Identity and Access Management (IAM)**: Cho phép bạn kiểm soát quyền truy cập vào các dịch vụ và tài nguyên AWS của bạn.
+
+2. **Amazon GuardDuty**: Dịch vụ phát hiện mối đe dọa thông minh, liên tục giám sát và phân tích các log dữ liệu để phát hiện hoạt động đáng ngờ và các mối đe dọa tiềm ẩn.
+
+3. **AWS Shield**: Bảo vệ chống lại các cuộc tấn công DDoS (Distributed Denial of Service) với hai phiên bản: AWS Shield Standard và AWS Shield Advanced.
+
+4. **AWS WAF (Web Application Firewall)**: Giúp bảo vệ các ứng dụng web của bạn khỏi các cuộc tấn công phổ biến như SQL injection và cross-site scripting.
+
+5. **AWS Key Management Service (KMS)**: Quản lý và bảo vệ khóa mã hóa cho các ứng dụng và dịch vụ của bạn.
+
+6. **Amazon Macie**: Dịch vụ bảo mật dữ liệu sử dụng machine learning để phát hiện, phân loại và bảo vệ dữ liệu nhạy cảm của bạn.
+
+7. **AWS CloudTrail**: Ghi lại các hành động gọi API cho tài khoản AWS của bạn, cung cấp thông tin chi tiết về người đã thực hiện hành động gì, khi nào và từ đâu.
+
+8. **AWS Config**: Cung cấp khả năng theo dõi cấu hình tài nguyên AWS của bạn và cảnh báo khi có sự thay đổi không mong muốn.
+
+9. **AWS Certificate Manager (ACM)**: Giúp bạn dễ dàng quản lý và triển khai các chứng chỉ SSL/TLS cho các trang web và ứng dụng của bạn.
+
+10. **AWS Secrets Manager**: Giúp bạn bảo vệ truy cập vào các thông tin nhạy cảm như mật khẩu, khóa API, và các thông tin đăng nhập khác bằng cách lưu trữ và quản lý chúng một cách an toàn.
+
+11. **AWS Security Hub**: Cung cấp một cái nhìn tổng thể về trạng thái bảo mật của bạn trong AWS, giúp bạn xác định và giải quyết các vấn đề bảo mật một cách hiệu quả.
+
+12. **Amazon Inspector**: Dịch vụ quét các lỗ hổng bảo mật trong các phiên bản EC2 và ứng dụng của bạn.
+
+Sử dụng các dịch vụ này, bạn có thể xây dựng một môi trường AWS an toàn, tuân thủ các tiêu chuẩn và quy định bảo mật quốc tế.
