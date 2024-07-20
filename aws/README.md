@@ -578,3 +578,50 @@ AWS cung cấp một loạt các dịch vụ bảo mật để giúp bảo vệ 
 12. **Amazon Inspector**: Dịch vụ quét các lỗ hổng bảo mật trong các phiên bản EC2 và ứng dụng của bạn.
 
 Sử dụng các dịch vụ này, bạn có thể xây dựng một môi trường AWS an toàn, tuân thủ các tiêu chuẩn và quy định bảo mật quốc tế.
+## Resource base policy
+Trong AWS, một số dịch vụ hỗ trợ các "resource-based policies" (chính sách dựa trên tài nguyên) để kiểm soát quyền truy cập vào các tài nguyên cụ thể. Các chính sách này được gắn trực tiếp vào tài nguyên và chỉ định ai (tài khoản AWS, người dùng, vai trò, nhóm, v.v.) có thể thực hiện những hành động nào trên tài nguyên đó. Dưới đây là một số dịch vụ phổ biến của AWS có hỗ trợ resource-based policies:
+
+### 1. **Amazon S3 (Simple Storage Service)**
+- Bạn có thể gắn các chính sách vào bucket để kiểm soát quyền truy cập đối với các đối tượng (objects) trong bucket đó.
+
+### 2. **AWS Lambda**
+- Chính sách dựa trên tài nguyên có thể được gắn vào hàm Lambda để chỉ định ai có thể thực hiện các hành động như `invoke` hàm.
+
+### 3. **Amazon SNS (Simple Notification Service)**
+- Chính sách có thể được gắn vào chủ đề SNS để kiểm soát quyền truy cập vào các chủ đề này.
+
+### 4. **Amazon SQS (Simple Queue Service)**
+- Chính sách có thể được gắn vào hàng đợi SQS để kiểm soát quyền truy cập vào các hàng đợi này.
+
+### 5. **Amazon ECR (Elastic Container Registry)**
+- Bạn có thể gắn các chính sách vào repository để kiểm soát quyền truy cập đối với các hình ảnh container.
+
+### 6. **AWS KMS (Key Management Service)**
+- Chính sách dựa trên tài nguyên có thể được gắn vào key KMS để kiểm soát quyền truy cập vào các khóa mã hóa.
+
+### 7. **AWS CodeBuild**
+- Chính sách có thể được gắn vào các dự án CodeBuild để kiểm soát quyền truy cập vào các dự án này.
+
+### 8. **AWS CodeArtifact**
+- Chính sách có thể được gắn vào repository để kiểm soát quyền truy cập vào các repository này.
+
+### 9. **AWS Step Functions**
+- Chính sách có thể được gắn vào các state machine để kiểm soát quyền truy cập vào các state machine này.
+
+### 10. **AWS Glue**
+- Chính sách có thể được gắn vào các Data Catalog để kiểm soát quyền truy cập vào các dữ liệu trong Glue.
+
+### 11. **AWS IAM Roles**
+- Các vai trò IAM có thể có các chính sách dựa trên tài nguyên để kiểm soát ai có thể giả mạo (assume) vai trò đó.
+
+### 12. **Amazon EFS (Elastic File System)**
+- Chính sách có thể được gắn vào hệ thống file để kiểm soát quyền truy cập vào các hệ thống file này.
+
+### 13. **AWS Secrets Manager**
+- Chính sách có thể được gắn vào bí mật để kiểm soát quyền truy cập vào các bí mật này.
+
+### 14. **AWS Service Catalog**
+- Chính sách có thể được gắn vào danh mục dịch vụ để kiểm soát quyền truy cập vào các danh mục này.
+
+### 15. **Amazon DynamoDB**
+- Chính sách có thể được gắn vào bảng để kiểm soát quyền truy cập vào các bảng này.
